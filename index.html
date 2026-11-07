@@ -76,7 +76,7 @@ header{background:var(--card);border-bottom:1px solid var(--line);padding-top:en
 
 <section id="chat" class="screen">
   <header>
-    <div class="top"><b>আমাদের চ্যাট</b><span><button id="setpin" aria-label="পিন">🔒</button><button id="out" aria-label="লগআউট">⎋</button></span></div>
+    <div class="top"><b>আমাদের চ্যাট</b><span><button id="bell" aria-label="নোটিফিকেশন">🔔</button><button id="setpin" aria-label="পিন">🔒</button><button id="out" aria-label="লগআউট">⎋</button></span></div>
     <div class="tabs"><button id="t1" class="on">চ্যাট</button><button id="t2">গ্যালারি</button></div>
   </header>
   <div id="msgs" class="pane on"></div>
@@ -261,6 +261,18 @@ $('send').onclick=sendText;$('pick').onclick=()=>$('file').click();$('file').onc
 $('txt').oninput=e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,120)+'px'};
 $('out').onclick=async()=>{if(!confirm('লগআউট করবেন?'))return;await sb.auth.signOut();if(chan)sb.removeChannel(chan);me=null;show('login')};
 (async()=>{const {data:{session}}=await sb.auth.getSession();if(session)start(session.user);else show('login')})();
+const VAPID='BEbPi_wfjiT4vHOalWkwbJTVSFh2oRKHR-P6YAWaZhjolCQeJ5V6ZEv5oi-9FpX6BsY0snbxxPg_BGYNk08NkeI';
+const u8=s=>{const r=atob((s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(r,c=>c.charCodeAt(0))};
+$('bell').onclick=async()=>{
+  if(!('serviceWorker' in navigator)||!('PushManager' in window)){alert('এই ব্রাউজারে নোটিফিকেশন চলবে না। Chrome ব্যবহার করুন।');return}
+  if(await Notification.requestPermission()!=='granted'){alert('নোটিফিকেশনের অনুমতি দেওয়া হয়নি');return}
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    const sub=(await reg.pushManager.getSubscription())||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8(VAPID)});
+    const {error}=await sb.from('push_subs').upsert({user_id:me,endpoint:sub.endpoint,sub:sub.toJSON()});
+    if(error)throw error;alert('নোটিফিকেশন চালু হয়েছে ✅');
+  }catch(e){console.error(e);alert('চালু করা যায়নি। আবার চেষ্টা করুন।')}
+};
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
