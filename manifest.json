@@ -1,0 +1,12 @@
+{
+  "name": "আমাদের চ্যাট",
+  "short_name": "আমাদের চ্যাট",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fbf5f3",
+  "theme_color": "#b83b5e",
+  "icons": [
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+  ]
+}

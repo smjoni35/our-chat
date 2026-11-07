@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#b83b5e">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg">
+<title>আমাদের চ্যাট</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>
+:root{--bg:#fbf5f3;--ink:#2a1f26;--mute:#8a7780;--rose:#b83b5e;--rose-d:#962f4c;--card:#fff;--line:#ecdfe2;--me:#b83b5e;--me-ink:#fff;--them:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#1b1418;--ink:#f3e8ec;--mute:#a48f98;--card:#271c22;--line:#3a2b33;--them:#2c2026}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{font-family:'Hind Siliguri',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:16px}
+.screen{display:none;height:100dvh;flex-direction:column}
+.screen.on{display:flex}
+#login{justify-content:center;padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px))}
+#login h1{font-size:30px;margin:0 0 4px;font-weight:600}
+#login p{margin:0 0 24px;color:var(--mute)}
+input,button{font:inherit}
+.f{width:100%;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);margin-bottom:12px}
+.btn{width:100%;padding:14px;border:0;border-radius:12px;background:var(--rose);color:#fff;font-weight:600}
+.btn:active{background:var(--rose-d)}
+#err{color:#c0392b;min-height:22px;margin:8px 0 0;font-size:14px}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top,0px));background:var(--card);border-bottom:1px solid var(--line)}
+header b{font-size:18px;font-weight:600}
+header button{background:none;border:0;color:var(--mute);padding:6px}
+#msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px}
+.day{align-self:center;color:var(--mute);font-size:12px;margin:10px 0 4px}
+.m{max-width:80%;padding:8px 12px;border-radius:16px;background:var(--them);border:1px solid var(--line);word-wrap:break-word;overflow-wrap:anywhere;white-space:pre-wrap;line-height:1.45}
+.m.me{align-self:flex-end;background:var(--me);color:var(--me-ink);border-color:var(--me);border-bottom-right-radius:4px}
+.m:not(.me){align-self:flex-start;border-bottom-left-radius:4px}
+.m a{color:inherit;text-decoration:underline}
+.m img{display:block;max-width:100%;max-height:320px;border-radius:10px;margin:2px 0;cursor:pointer;min-height:60px;background:rgba(0,0,0,.08)}
+.t{display:block;font-size:11px;opacity:.7;text-align:right;margin-top:2px}
+.empty{margin:auto;color:var(--mute);text-align:center}
+#bar{display:flex;gap:8px;align-items:flex-end;padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--line)}
+#txt{flex:1;resize:none;max-height:120px;padding:10px 14px;border:1px solid var(--line);border-radius:20px;background:var(--bg);color:var(--ink);line-height:1.4}
+.ic{width:42px;height:42px;border-radius:50%;border:0;background:var(--rose);color:#fff;font-size:18px;flex:none}
+.ic.alt{background:var(--bg);color:var(--rose);border:1px solid var(--line)}
+.ic:disabled{opacity:.5}
+</style>
+</head>
+<body>
+<section id="login" class="screen">
+  <h1>আমাদের চ্যাট</h1>
+  <p>শুধু আমাদের দুজনের জন্য</p>
+  <input id="em" class="f" type="email" placeholder="ইমেইল" autocomplete="username">
+  <input id="pw" class="f" type="password" placeholder="পাসওয়ার্ড" autocomplete="current-password">
+  <button id="go" class="btn">লগইন</button>
+  <div id="err"></div>
+</section>
+
+<section id="chat" class="screen">
+  <header><b>আমাদের চ্যাট</b><button id="out">লগআউট</button></header>
+  <div id="msgs"></div>
+  <div id="bar">
+    <button id="pick" class="ic alt" aria-label="ছবি">📷</button>
+    <input id="file" type="file" accept="image/*" hidden>
+    <textarea id="txt" rows="1" placeholder="মেসেজ লিখুন"></textarea>
+    <button id="send" class="ic" aria-label="পাঠান">➤</button>
+  </div>
+</section>
+
+<script>
+const SUPABASE_URL='https://ockrtfffgqttdrglvdwe.supabase.co';
+const SUPABASE_KEY='sb_publishable_ngtroLtSH5NnwP5HB_5pag__PJkKLht';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+let me=null,channel=null,lastDay='';const shown=new Set();
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id))}
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function linkify(s){return esc(s).replace(/(https?:\/\/[^\s<]+)/g,u=>`<a href="${u}" target="_blank" rel="noopener noreferrer">${u}</a>`)}
+function atBottom(){const e=$('msgs');return e.scrollHeight-e.scrollTop-e.clientHeight<120}
+function toBottom(){const e=$('msgs');e.scrollTop=e.scrollHeight}
+
+function render(m){
+  if(shown.has(m.id))return;shown.add(m.id);
+  const box=$('msgs'),stick=atBottom(),d=new Date(m.created_at);
+  const emp=box.querySelector('.empty');if(emp)emp.remove();
+  const day=d.toDateString();
+  if(day!==lastDay){lastDay=day;const x=document.createElement('div');x.className='day';x.textContent=d.toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'});box.appendChild(x)}
+  const el=document.createElement('div');el.className='m'+(m.sender_id===me?' me':'');
+  if(m.image_path){
+    const img=document.createElement('img');img.alt='ছবি';el.appendChild(img);
+    sb.storage.from('photos').createSignedUrl(m.image_path,3600).then(({data})=>{
+      if(data){img.src=data.signedUrl;img.onclick=()=>window.open(data.signedUrl,'_blank');img.onload=()=>{if(stick)toBottom()}}
+    });
+  }
+  if(m.body){const s=document.createElement('span');s.innerHTML=linkify(m.body);el.appendChild(s)}
+  const t=document.createElement('span');t.className='t';t.textContent=d.toLocaleTimeString('bn-BD',{hour:'numeric',minute:'2-digit'});el.appendChild(t);
+  box.appendChild(el);
+  if(stick||m.sender_id===me)toBottom();
+}
+
+async function load(){
+  const {data,error}=await sb.from('messages').select('*').order('created_at',{ascending:false}).limit(200);
+  if(error){console.error(error);return}
+  data.reverse().forEach(render);
+  if(!shown.size)$('msgs').innerHTML='<div class="empty">এখনও কোনো মেসেজ নেই।<br>প্রথম মেসেজটা পাঠান।</div>';
+  toBottom();
+}
+
+function listen(){
+  if(channel)sb.removeChannel(channel);
+  channel=sb.channel('msgs').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},p=>render(p.new)).subscribe();
+}
+
+async function start(user){
+  me=user.id;shown.clear();lastDay='';$('msgs').innerHTML='';
+  show('chat');await load();listen();
+}
+
+async function login(){
+  $('err').textContent='';$('go').disabled=true;
+  const {data,error}=await sb.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value});
+  $('go').disabled=false;
+  if(error){$('err').textContent='ইমেইল বা পাসওয়ার্ড ঠিক নয়। আবার চেষ্টা করুন।';return}
+  start(data.user);
+}
+
+async function sendText(){
+  const body=$('txt').value.trim();if(!body)return;
+  $('txt').value='';$('txt').style.height='auto';
+  const {error}=await sb.from('messages').insert({body});
+  if(error){$('txt').value=body;alert('মেসেজ যায়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।')}
+}
+
+function compress(file){
+  return new Promise((res,rej)=>{
+    const img=new Image(),u=URL.createObjectURL(file);
+    img.onload=()=>{
+      const k=Math.min(1,1280/Math.max(img.width,img.height)),c=document.createElement('canvas');
+      c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);
+      c.toBlob(b=>b?res(b):rej(new Error('compress')),'image/jpeg',0.75);
+    };
+    img.onerror=()=>rej(new Error('load'));img.src=u;
+  });
+}
+
+async function sendPhoto(file){
+  if(!file)return;$('pick').disabled=true;
+  try{
+    const blob=await compress(file),path=`${me}/${Date.now()}.jpg`;
+    const up=await sb.storage.from('photos').upload(path,blob,{contentType:'image/jpeg'});
+    if(up.error)throw up.error;
+    const {error}=await sb.from('messages').insert({image_path:path});
+    if(error)throw error;
+  }catch(e){console.error(e);alert('ছবি পাঠানো যায়নি। আবার চেষ্টা করুন।')}
+  $('pick').disabled=false;$('file').value='';
+}
+
+$('go').onclick=login;
+$('pw').onkeydown=e=>{if(e.key==='Enter')login()};
+$('send').onclick=sendText;
+$('pick').onclick=()=>$('file').click();
+$('file').onchange=e=>sendPhoto(e.target.files[0]);
+$('txt').oninput=e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,120)+'px'};
+$('out').onclick=async()=>{await sb.auth.signOut();if(channel)sb.removeChannel(channel);show('login')};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me)load()});
+
+(async()=>{
+  const {data:{session}}=await sb.auth.getSession();
+  if(session)start(session.user);else show('login');
+})();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
