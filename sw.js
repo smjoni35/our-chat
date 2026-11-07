@@ -8,7 +8,7 @@ self.addEventListener('fetch',e=>{
 });
 self.addEventListener('push',e=>{
   let d={};try{d=e.data.json()}catch(_){}
-  e.waitUntil(self.registration.showNotification(d.title||'আমাদের চ্যাট',{body:d.body||'নতুন মেসেজ',icon:'icon.svg',badge:'icon.svg',tag:'chat'}));
+  e.waitUntil(self.registration.showNotification(d.title||'Our Chat',{body:d.body||'New message',icon:'icon.svg',badge:'icon.svg',tag:'chat'}));
 });
 self.addEventListener('notificationclick',e=>{
   e.notification.close();

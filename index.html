@@ -1,20 +1,20 @@
 <!doctype html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#b83b5e">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg">
-<title>আমাদের চ্যাট</title>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Our Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
 :root{--bg:#fbf5f3;--ink:#2a1f26;--mute:#8a7780;--rose:#b83b5e;--card:#fff;--line:#ecdfe2;--them:#fff}
 @media (prefers-color-scheme:dark){:root{--bg:#1b1418;--ink:#f3e8ec;--mute:#a48f98;--card:#271c22;--line:#3a2b33;--them:#2c2026}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0}
-body{font-family:'Hind Siliguri',system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+body{font-family:'Inter','Hind Siliguri',system-ui,sans-serif;background:var(--bg);color:var(--ink)}
 .screen{display:none;height:100dvh;flex-direction:column}.screen.on{display:flex}
 input,button,textarea{font:inherit}
 .center{justify-content:center;align-items:center;padding:24px;text-align:center}
@@ -65,37 +65,37 @@ header{background:var(--card);border-bottom:1px solid var(--line);padding-top:en
 </head>
 <body>
 <section id="login" class="screen center on" style="display:none">
-  <h1>আমাদের চ্যাট</h1><p>শুধু আমাদের দুজনের জন্য</p>
-  <input id="em" class="f" type="email" placeholder="ইমেইল" autocomplete="username">
-  <input id="pw" class="f" type="password" placeholder="পাসওয়ার্ড" autocomplete="current-password">
-  <button id="go" class="btn">লগইন</button><div id="err"></div>
+  <h1>Our Chat</h1><p>Private chat, just for the two of us</p>
+  <input id="em" class="f" type="email" placeholder="Email" autocomplete="username">
+  <input id="pw" class="f" type="password" placeholder="Password" autocomplete="current-password">
+  <button id="go" class="btn">Sign in</button><div id="err"></div>
 </section>
 
 <section id="lock" class="screen center">
-  <svg class="i big" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><h1>পিন দিন</h1><p>অ্যাপ খুলতে ৪ সংখ্যার পিন</p>
+  <svg class="i big" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><h1>Enter PIN</h1><p>Enter your 4-digit PIN to open the app</p>
   <input id="pin" class="f" type="password" inputmode="numeric" maxlength="4" autocomplete="off">
   <div id="perr"></div>
 </section>
 
 <section id="chat" class="screen">
   <header>
-    <div class="top"><b>আমাদের চ্যাট</b><span><button id="bell" aria-label="নোটিফিকেশন"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button><button id="setpin" aria-label="পিন"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></button><button id="out" aria-label="লগআউট"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></button></span></div>
-    <div class="tabs"><button id="t1" class="on">চ্যাট</button><button id="t2">গ্যালারি</button></div>
+    <div class="top"><b>Our Chat</b><span><button id="bell" aria-label="Notifications"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button><button id="setpin" aria-label="PIN lock"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></button><button id="out" aria-label="Sign out"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></button></span></div>
+    <div class="tabs"><button id="t1" class="on">Chat</button><button id="t2">Gallery</button></div>
   </header>
   <div id="msgs" class="pane on"></div>
   <div id="grid" class="pane"></div>
   <div id="bar">
-    <div id="rep"><span id="rept"></span><button id="repx" aria-label="বাতিল"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button></div>
+    <div id="rep"><span id="rept"></span><button id="repx" aria-label="Cancel"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button></div>
     <div class="row">
-      <button id="pick" class="ic alt" aria-label="ছবি"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
+      <button id="pick" class="ic alt" aria-label="Photo"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
       <input id="file" type="file" accept="image/*" hidden>
-      <textarea id="txt" rows="1" placeholder="মেসেজ লিখুন"></textarea>
-      <button id="send" class="ic" aria-label="পাঠান"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg></button>
+      <textarea id="txt" rows="1" placeholder="Type a message"></textarea>
+      <button id="send" class="ic" aria-label="Send"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg></button>
     </div>
   </div>
 </section>
 
-<div id="lb" class="ov"><img id="lbi" alt=""><div><a id="lbd" download="photo.jpg">সেভ করুন</a><button id="lbx">বন্ধ করুন</button></div></div>
+<div id="lb" class="ov"><img id="lbi" alt=""><div><a id="lbd" download="photo.jpg">Save</a><button id="lbx">Close</button></div></div>
 <div id="sh" class="ov"><div id="shc"><div id="emo"></div><div id="acts"></div></div></div>
 
 <script>
@@ -110,7 +110,7 @@ const linkify=s=>esc(s).replace(/(https?:\/\/[^\s<]+)/g,u=>`<a href="${u}" targe
 const near=()=>{const e=$('msgs');return e.scrollHeight-e.scrollTop-e.clientHeight<120};
 const down=()=>{const e=$('msgs');e.scrollTop=e.scrollHeight};
 async function sign(p){if(urls.has(p))return urls.get(p);const {data}=await sb.storage.from('photos').createSignedUrl(p,3600);if(data)urls.set(p,data.signedUrl);return data&&data.signedUrl}
-const snip=m=>m?(m.body?m.body.slice(0,60):'ছবি'):'মুছে ফেলা মেসেজ';
+const snip=m=>m?(m.body?m.body.slice(0,60):'Photo'):'Deleted message';
 
 /* ---------- PIN lock ---------- */
 const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('our-chat:'+s)))].map(b=>b.toString(16).padStart(2,'0')).join('');
@@ -118,14 +118,14 @@ function lockNow(){if(!localStorage.getItem('pinh'))return false;$('pin').value=
 $('pin').oninput=async e=>{
   if(e.target.value.length<4)return;
   if(await sha(e.target.value)===localStorage.getItem('pinh')){show('chat');setTimeout(down,50);markSoon()}
-  else{$('perr').textContent='পিন ঠিক নয়';e.target.value=''}
+  else{$('perr').textContent='Incorrect PIN';e.target.value=''}
 };
 $('setpin').onclick=async()=>{
-  const p=prompt('নতুন ৪ সংখ্যার পিন দিন। পিন বন্ধ করতে খালি রেখে OK চাপুন।');
+  const p=prompt('Enter a new 4-digit PIN. Leave it empty and press OK to turn the PIN off.');
   if(p===null)return;
-  if(p===''){localStorage.removeItem('pinh');alert('পিন বন্ধ হয়েছে');return}
-  if(!/^\d{4}$/.test(p)){alert('ঠিক ৪টা সংখ্যা দিন');return}
-  localStorage.setItem('pinh',await sha(p));alert('পিন চালু হয়েছে');
+  if(p===''){localStorage.removeItem('pinh');alert('PIN turned off');return}
+  if(!/^\d{4}$/.test(p)){alert('Enter exactly 4 digits');return}
+  localStorage.setItem('pinh',await sha(p));alert('PIN turned on');
 };
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){hiddenAt=Date.now();return}
@@ -143,13 +143,13 @@ function paintRx(id){
 function render(m){
   if(shown.has(m.id))return;shown.add(m.id);cache.set(m.id,m);
   const box=$('msgs'),stick=near(),d=new Date(m.created_at),emp=box.querySelector('.empty');if(emp)emp.remove();
-  if(d.toDateString()!==lastDay){lastDay=d.toDateString();const x=document.createElement('div');x.className='day';x.textContent=d.toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'});box.appendChild(x)}
+  if(d.toDateString()!==lastDay){lastDay=d.toDateString();const x=document.createElement('div');x.className='day';x.textContent=d.toLocaleDateString('en-US',{day:'numeric',month:'long',year:'numeric'});box.appendChild(x)}
   const el=document.createElement('div');el.className='m'+(m.sender_id===me?' me':'');el.dataset.id=m.id;
   if(m.reply_to){const q=document.createElement('div');q.className='q';q.textContent=snip(cache.get(m.reply_to));el.appendChild(q)}
-  if(m.image_path){const i=document.createElement('img');i.alt='ছবি';el.appendChild(i);
+  if(m.image_path){const i=document.createElement('img');i.alt='Photo';el.appendChild(i);
     sign(m.image_path).then(u=>{if(u){i.src=u;i.onload=()=>{if(stick)down()}}});i.dataset.p=m.image_path}
   if(m.body){const s=document.createElement('span');s.innerHTML=linkify(m.body);el.appendChild(s)}
-  const t=document.createElement('span');t.className='t';t.textContent=d.toLocaleTimeString('bn-BD',{hour:'numeric',minute:'2-digit'});if(m.sender_id===me){const k=document.createElement('span');k.className='tk';t.appendChild(k)}el.appendChild(t);
+  const t=document.createElement('span');t.className='t';t.textContent=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});if(m.sender_id===me){const k=document.createElement('span');k.className='tk';t.appendChild(k)}el.appendChild(t);
   const r=document.createElement('div');r.className='rx';el.appendChild(r);
   box.appendChild(el);paintRx(m.id);paintTick(m.id);if(m.sender_id!==me)markSoon();
   if(stick||m.sender_id===me)down();
@@ -164,7 +164,7 @@ async function load(){
   (b.data||[]).forEach(r=>{const o=rx.get(r.message_id)||{};o[r.user_id]=r.emoji;rx.set(r.message_id,o)});
   a.data.reverse().forEach(render);
   rx.forEach((_,id)=>paintRx(id));
-  if(!shown.size)$('msgs').innerHTML='<div class="empty">এখনও কোনো মেসেজ নেই।<br>প্রথম মেসেজটা পাঠান।</div>';
+  if(!shown.size)$('msgs').innerHTML='<div class="empty">No messages yet.<br>Send the first one.</div>';
   down();
 }
 
@@ -209,7 +209,7 @@ $('msgs').onclick=e=>{
   target=cache.get(+el.dataset.id);if(!target)return;
   $('emo').innerHTML=EMO.map(x=>`<button data-e="${x}">${x}</button>`).join('');
   const own=target.sender_id===me;
-  $('acts').innerHTML=`<button data-a="rep"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg> রিপ্লাই</button>${target.body?'<button data-a="cp"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> কপি</button>':''}${own?'<button class="dl" data-a="del"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> ডিলিট</button>':''}`;
+  $('acts').innerHTML=`<button data-a="rep"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg> Reply</button>${target.body?'<button data-a="cp"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>':''}${own?'<button class="dl" data-a="del"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Delete</button>':''}`;
   $('sh').classList.add('on');
 };
 $('sh').onclick=async e=>{
@@ -219,11 +219,11 @@ $('sh').onclick=async e=>{
     const mine=(rx.get(target.id)||{})[me];
     if(mine===b.dataset.e)await sb.from('reactions').delete().eq('message_id',target.id).eq('user_id',me);
     else await sb.from('reactions').upsert({message_id:target.id,user_id:me,emoji:b.dataset.e});
-  }else if(b.dataset.a==='rep'){reply=target.id;$('rept').textContent='রিপ্লাই: '+snip(target);$('rep').style.display='flex';$('txt').focus()}
+  }else if(b.dataset.a==='rep'){reply=target.id;$('rept').textContent='Replying to: '+snip(target);$('rep').style.display='flex';$('txt').focus()}
   else if(b.dataset.a==='cp')navigator.clipboard&&navigator.clipboard.writeText(target.body);
-  else if(b.dataset.a==='del'&&confirm('মেসেজটা সবার জন্য মুছে যাবে। ডিলিট করবেন?')){
+  else if(b.dataset.a==='del'&&confirm('This message will be deleted for everyone. Delete it?')){
     const {error}=await sb.from('messages').delete().eq('id',target.id);
-    if(error)alert('ডিলিট হয়নি');else if(target.image_path)sb.storage.from('photos').remove([target.image_path]);
+    if(error)alert('Could not delete the message.');else if(target.image_path)sb.storage.from('photos').remove([target.image_path]);
   }
 };
 const clearRep=()=>{reply=null;$('rep').style.display='none'};
@@ -233,7 +233,7 @@ async function sendText(){
   const body=$('txt').value.trim();if(!body)return;
   $('txt').value='';$('txt').style.height='auto';const rt=reply;clearRep();
   const {error}=await sb.from('messages').insert({body,reply_to:rt});
-  if(error){$('txt').value=body;alert('মেসেজ যায়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।')}
+  if(error){$('txt').value=body;alert('Message not sent. Check your connection and try again.')}
 }
 function compress(f){return new Promise((ok,no)=>{const i=new Image(),u=URL.createObjectURL(f);
   i.onload=()=>{const k=Math.min(1,1280/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);
@@ -243,7 +243,7 @@ async function sendPhoto(f){
   try{const b=await compress(f),p=`${me}/${Date.now()}.jpg`,rt=reply;clearRep();
     const u=await sb.storage.from('photos').upload(p,b,{contentType:'image/jpeg'});if(u.error)throw u.error;
     const {error}=await sb.from('messages').insert({image_path:p,reply_to:rt});if(error)throw error}
-  catch(e){console.error(e);alert('ছবি পাঠানো যায়নি। আবার চেষ্টা করুন।')}
+  catch(e){console.error(e);alert('Could not send the photo. Please try again.')}
   $('pick').disabled=false;$('file').value='';
 }
 
@@ -252,12 +252,12 @@ function openLb(u){$('lbi').src=u;$('lbd').href=u;$('lb').classList.add('on')}
 $('lbx').onclick=()=>$('lb').classList.remove('on');
 async function buildGrid(){
   const g=$('grid'),ph=[...cache.values()].filter(m=>m.image_path).sort((a,b)=>b.created_at.localeCompare(a.created_at));
-  g.innerHTML='';if(!ph.length){g.innerHTML='<div class="empty" style="width:100%;padding:40px">এখনও কোনো ছবি নেই।</div>';gridDone=true;return}
+  g.innerHTML='';if(!ph.length){g.innerHTML='<div class="empty" style="width:100%;padding:40px">No photos yet.</div>';gridDone=true;return}
   let mo='';
   for(const m of ph){
-    const l=new Date(m.created_at).toLocaleDateString('bn-BD',{month:'long',year:'numeric'});
+    const l=new Date(m.created_at).toLocaleDateString('en-US',{month:'long',year:'numeric'});
     if(l!==mo){mo=l;const h=document.createElement('div');h.className='gh';h.textContent=l;g.appendChild(h)}
-    const i=document.createElement('img');i.loading='lazy';i.alt='ছবি';g.appendChild(i);
+    const i=document.createElement('img');i.loading='lazy';i.alt='Photo';g.appendChild(i);
     sign(m.image_path).then(u=>{if(u){i.src=u;i.onclick=()=>openLb(u)}});
   }
   gridDone=true;
@@ -275,25 +275,25 @@ async function login(){
   $('err').textContent='';$('go').disabled=true;
   const {data,error}=await sb.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value});
   $('go').disabled=false;
-  if(error){$('err').textContent='ইমেইল বা পাসওয়ার্ড ঠিক নয়। আবার চেষ্টা করুন।';return}
+  if(error){$('err').textContent='Incorrect email or password.';return}
   start(data.user);
 }
 $('go').onclick=login;$('pw').onkeydown=e=>{if(e.key==='Enter')login()};
 $('send').onclick=sendText;$('pick').onclick=()=>$('file').click();$('file').onchange=e=>sendPhoto(e.target.files[0]);
 $('txt').oninput=e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,120)+'px'};
-$('out').onclick=async()=>{if(!confirm('লগআউট করবেন?'))return;await sb.auth.signOut();if(chan)sb.removeChannel(chan);me=null;show('login')};
+$('out').onclick=async()=>{if(!confirm('Sign out?'))return;await sb.auth.signOut();if(chan)sb.removeChannel(chan);me=null;show('login')};
 (async()=>{const {data:{session}}=await sb.auth.getSession();if(session)start(session.user);else show('login')})();
 const VAPID='BEbPi_wfjiT4vHOalWkwbJTVSFh2oRKHR-P6YAWaZhjolCQeJ5V6ZEv5oi-9FpX6BsY0snbxxPg_BGYNk08NkeI';
 const u8=s=>{const r=atob((s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(r,c=>c.charCodeAt(0))};
 $('bell').onclick=async()=>{
-  if(!('serviceWorker' in navigator)||!('PushManager' in window)){alert('এই ব্রাউজারে নোটিফিকেশন চলবে না। Chrome ব্যবহার করুন।');return}
-  if(await Notification.requestPermission()!=='granted'){alert('নোটিফিকেশনের অনুমতি দেওয়া হয়নি');return}
+  if(!('serviceWorker' in navigator)||!('PushManager' in window)){alert('Notifications are not supported in this browser. Please use Chrome.');return}
+  if(await Notification.requestPermission()!=='granted'){alert('Notification permission was not granted.');return}
   try{
     const reg=await navigator.serviceWorker.ready;
     const sub=(await reg.pushManager.getSubscription())||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8(VAPID)});
     const {error}=await sb.from('push_subs').upsert({user_id:me,endpoint:sub.endpoint,sub:sub.toJSON()});
-    if(error)throw error;alert('নোটিফিকেশন চালু হয়েছে');
-  }catch(e){console.error(e);alert('চালু করা যায়নি।\n\nকারণ: '+((e&&(e.name?e.name+': ':'')+(e.message||e.details||''))||e))}
+    if(error)throw error;alert('Notifications turned on');
+  }catch(e){console.error(e);alert('Could not turn on notifications.\n\nReason: '+((e&&(e.name?e.name+': ':'')+(e.message||e.details||''))||e))}
 };
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
