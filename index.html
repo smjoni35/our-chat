@@ -271,7 +271,7 @@ $('bell').onclick=async()=>{
     const sub=(await reg.pushManager.getSubscription())||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8(VAPID)});
     const {error}=await sb.from('push_subs').upsert({user_id:me,endpoint:sub.endpoint,sub:sub.toJSON()});
     if(error)throw error;alert('নোটিফিকেশন চালু হয়েছে ✅');
-  }catch(e){console.error(e);alert('চালু করা যায়নি। আবার চেষ্টা করুন।')}
+  }catch(e){console.error(e);alert('চালু করা যায়নি।\n\nকারণ: '+((e&&(e.name?e.name+': ':'')+(e.message||e.details||''))||e))}
 };
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
