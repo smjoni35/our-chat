@@ -47,8 +47,8 @@ header{background:var(--card);border-bottom:1px solid var(--line);padding-top:en
 #rep{display:none;justify-content:space-between;align-items:center;padding:4px 10px;margin-bottom:6px;border-left:3px solid var(--rose);background:var(--bg);font-size:13px;color:var(--mute)}
 #rep button{background:none;border:0;color:var(--mute);font-size:16px}
 .row{display:flex;gap:8px;align-items:flex-end}
-#txt{flex:1;resize:none;max-height:120px;padding:10px 14px;border:1px solid var(--line);border-radius:20px;background:var(--bg);color:var(--ink);line-height:1.4}
-.ic{width:42px;height:42px;border-radius:50%;border:0;background:var(--rose);color:#fff;font-size:18px;flex:none}
+#txt{flex:1;min-width:0;min-height:44px;resize:none;max-height:122px;margin:0;padding:10px 16px;border:1px solid var(--line);border-radius:22px;background:var(--bg);color:var(--ink);font-size:16px;line-height:22px;outline:none;display:block}#txt:focus{border-color:var(--rose)}
+.ic{width:44px;height:44px;border-radius:50%;border:0;padding:0;display:inline-flex;align-items:center;justify-content:center;background:var(--rose);color:#fff;flex:none;cursor:pointer}#send .i{transform:translate(-1px,1px)}
 .ic.alt{background:var(--bg);color:var(--rose);border:1px solid var(--line)}.ic:disabled{opacity:.5}
 #grid{flex-wrap:wrap;align-content:flex-start;gap:3px;padding:3px}
 #grid .gh{width:100%;padding:10px 8px 2px;color:var(--mute);font-size:13px}
@@ -280,7 +280,7 @@ async function login(){
 }
 $('go').onclick=login;$('pw').onkeydown=e=>{if(e.key==='Enter')login()};
 $('send').onclick=sendText;$('pick').onclick=()=>$('file').click();$('file').onchange=e=>sendPhoto(e.target.files[0]);
-$('txt').oninput=e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,120)+'px'};
+$('txt').oninput=e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight+2,122)+'px'};
 $('out').onclick=async()=>{if(!confirm('Sign out?'))return;await sb.auth.signOut();if(chan)sb.removeChannel(chan);me=null;show('login')};
 (async()=>{const {data:{session}}=await sb.auth.getSession();if(session)start(session.user);else show('login')})();
 const VAPID='BEbPi_wfjiT4vHOalWkwbJTVSFh2oRKHR-P6YAWaZhjolCQeJ5V6ZEv5oi-9FpX6BsY0snbxxPg_BGYNk08NkeI';
