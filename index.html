@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#b83b5e">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg">
-<title>Our Chat</title>
+<title>Alcove</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
@@ -32,8 +32,8 @@ header{background:var(--card);border-bottom:1px solid var(--line);padding-top:en
 #msgs{flex-direction:column;gap:4px;padding:12px}
 .day{align-self:center;color:var(--mute);font-size:12px;margin:10px 0 4px}
 .m{max-width:80%;padding:8px 12px;border-radius:16px;background:var(--them);border:1px solid var(--line);overflow-wrap:anywhere;white-space:pre-wrap;line-height:1.45;position:relative}
-.m.me{align-self:flex-end;background:var(--rose);color:#fff;border-color:var(--rose);border-bottom-right-radius:4px}
-.m:not(.me){align-self:flex-start;border-bottom-left-radius:4px}
+.m.me{align-self:flex-end;background:var(--rose);color:#fff;border-color:var(--rose);}
+.m:not(.me){align-self:flex-start}
 .m a{color:inherit;text-decoration:underline}
 .m img{display:block;max-width:100%;max-height:320px;border-radius:10px;min-height:60px;background:rgba(0,0,0,.08)}
 .t{display:block;font-size:11px;opacity:.7;text-align:right;margin-top:2px}
@@ -42,6 +42,13 @@ header{background:var(--card);border-bottom:1px solid var(--line);padding-top:en
 .tk{margin-left:4px;letter-spacing:-2px}.tk.sn{color:#7fd6ff;font-weight:600}
 .i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}.i.big{width:44px;height:44px;margin-bottom:10px;color:var(--rose)}
 .top span button{display:inline-flex;align-items:center}.top span .i{width:22px;height:22px}#rep button{display:flex}
+.ttl b{display:block;font-size:18px;font-weight:600;line-height:1.2}.ttl small{display:block;font-size:12px;color:var(--mute);min-height:16px}.ttl small.on{color:#2e9e6b}
+.hb{background:none;border:0;color:var(--mute);width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;margin-right:-8px}.hb .i{width:22px;height:22px}
+.logo{width:76px;height:76px;border-radius:20px;margin-bottom:16px;box-shadow:0 6px 20px rgba(184,59,94,.25)}
+.stt{font-weight:600;padding:2px 6px 10px;color:var(--mute);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+#msgs{touch-action:pan-y}.m{will-change:transform}
+.m.me:not(.gn){border-bottom-right-radius:4px}.m:not(.me):not(.gn){border-bottom-left-radius:4px}
+.m.gp{margin-top:-3px}.m.me.gn{border-bottom-right-radius:6px}.m.me.gp{border-top-right-radius:6px}.m:not(.me).gn{border-bottom-left-radius:6px}.m:not(.me).gp{border-top-left-radius:6px}.m.gn .t{display:none}
 .empty{margin:auto;color:var(--mute);text-align:center}
 #bar{background:var(--card);border-top:1px solid var(--line);padding:8px 12px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
 #rep{display:none;justify-content:space-between;align-items:center;padding:4px 10px;margin-bottom:6px;border-left:3px solid var(--rose);background:var(--bg);font-size:13px;color:var(--mute)}
@@ -56,16 +63,16 @@ header{background:var(--card);border-bottom:1px solid var(--line);padding-top:en
 .ov{position:fixed;inset:0;z-index:20;display:none}.ov.on{display:flex}
 #lb{background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:center}
 #lb img{max-width:100%;max-height:82%}#lb button,#lb a{color:#fff;background:none;border:0;padding:14px;font-size:15px;text-decoration:none}
-#sh{background:rgba(0,0,0,.4);align-items:flex-end}
-#shc{width:100%;background:var(--card);border-radius:18px 18px 0 0;padding:14px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+#sh,#st{background:rgba(0,0,0,.4);align-items:flex-end}
+#shc,#stc{width:100%;background:var(--card);border-radius:18px 18px 0 0;padding:14px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
 #emo{display:flex;justify-content:space-around;margin-bottom:8px}#emo button{font-size:26px;background:none;border:0;padding:6px}
-#acts button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 6px;background:none;border:0;border-top:1px solid var(--line);color:var(--ink);font-size:16px}
-#acts .dl{color:#c0392b}
+#acts button,#stl button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 6px;background:none;border:0;border-top:1px solid var(--line);color:var(--ink);font-size:16px}
+#acts .dl,#stl .dl{color:#c0392b}
 </style>
 </head>
 <body>
 <section id="login" class="screen center on" style="display:none">
-  <h1>Our Chat</h1><p>Private chat, just for the two of us</p>
+  <img class="logo" src="icon.svg" alt=""><h1>Alcove</h1><p>Private. Yours. Always.</p>
   <input id="em" class="f" type="email" placeholder="Email" autocomplete="username">
   <input id="pw" class="f" type="password" placeholder="Password" autocomplete="current-password">
   <button id="go" class="btn">Sign in</button><div id="err"></div>
@@ -79,7 +86,7 @@ header{background:var(--card);border-bottom:1px solid var(--line);padding-top:en
 
 <section id="chat" class="screen">
   <header>
-    <div class="top"><b>Our Chat</b><span><button id="bell" aria-label="Notifications"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button><button id="setpin" aria-label="PIN lock"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></button><button id="out" aria-label="Sign out"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></button></span></div>
+    <div class="top"><div class="ttl"><b>Alcove</b><small id="stat">Offline</small></div><button id="menu" class="hb" aria-label="Settings"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></button></div>
     <div class="tabs"><button id="t1" class="on">Chat</button><button id="t2">Gallery</button></div>
   </header>
   <div id="msgs" class="pane on"></div>
@@ -95,6 +102,7 @@ header{background:var(--card);border-bottom:1px solid var(--line);padding-top:en
   </div>
 </section>
 
+<div id="st" class="ov"><div id="stc"><div class="stt">Settings</div><div id="stl"><button id="bell"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifications</button><button id="setpin"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> App lock (PIN)</button><button id="out" class="dl"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg> Sign out</button></div></div></div>
 <div id="lb" class="ov"><img id="lbi" alt=""><div><a id="lbd" download="photo.jpg">Save</a><button id="lbx">Close</button></div></div>
 <div id="sh" class="ov"><div id="shc"><div id="emo"></div><div id="acts"></div></div></div>
 
@@ -103,6 +111,7 @@ const sb=supabase.createClient('https://ockrtfffgqttdrglvdwe.supabase.co','sb_pu
 const $=id=>document.getElementById(id),EMO=['❤️','😂','😮','😢','👍'];
 let me=null,chan=null,lastDay='',reply=null,hiddenAt=0,gridDone=false;
 const cache=new Map(),shown=new Set(),rx=new Map(),urls=new Map(),rc=new Map();
+let editing=null,lastEl=null,swiped=false,sw=null,room=null,typT=0,tmo=null,peerOn=false;
 
 function show(id){document.querySelectorAll('.screen').forEach(s=>{s.classList.toggle('on',s.id===id);s.style.display=''})}
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -110,6 +119,7 @@ const linkify=s=>esc(s).replace(/(https?:\/\/[^\s<]+)/g,u=>`<a href="${u}" targe
 const near=()=>{const e=$('msgs');return e.scrollHeight-e.scrollTop-e.clientHeight<120};
 const down=()=>{const e=$('msgs');e.scrollTop=e.scrollHeight};
 async function sign(p){if(urls.has(p))return urls.get(p);const {data}=await sb.storage.from('photos').createSignedUrl(p,3600);if(data)urls.set(p,data.signedUrl);return data&&data.signedUrl}
+const timeStr=m=>new Date(m.created_at).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+(m.edited_at?' · edited':'');
 const snip=m=>m?(m.body?m.body.slice(0,60):'Photo'):'Deleted message';
 
 /* ---------- PIN lock ---------- */
@@ -128,8 +138,9 @@ $('setpin').onclick=async()=>{
   localStorage.setItem('pinh',await sha(p));alert('PIN turned on');
 };
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){hiddenAt=Date.now();return}
+  if(document.hidden){hiddenAt=Date.now();if(room)room.untrack();return}
   if(!me)return;
+  if(room)room.track({at:Date.now()});
   if(Date.now()-hiddenAt>30000)lockNow();
   load();
 });
@@ -148,9 +159,10 @@ function render(m){
   if(m.reply_to){const q=document.createElement('div');q.className='q';q.textContent=snip(cache.get(m.reply_to));el.appendChild(q)}
   if(m.image_path){const i=document.createElement('img');i.alt='Photo';el.appendChild(i);
     sign(m.image_path).then(u=>{if(u){i.src=u;i.onload=()=>{if(stick)down()}}});i.dataset.p=m.image_path}
-  if(m.body){const s=document.createElement('span');s.innerHTML=linkify(m.body);el.appendChild(s)}
-  const t=document.createElement('span');t.className='t';t.textContent=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});if(m.sender_id===me){const k=document.createElement('span');k.className='tk';t.appendChild(k)}el.appendChild(t);
+  if(m.body){const s=document.createElement('span');s.className='bd';s.innerHTML=linkify(m.body);el.appendChild(s)}
+  const t=document.createElement('span');t.className='t';t.textContent=timeStr(m);if(m.sender_id===me){const k=document.createElement('span');k.className='tk';t.appendChild(k)}el.appendChild(t);
   const r=document.createElement('div');r.className='rx';el.appendChild(r);
+  const day=d.toDateString();if(lastEl&&lastEl.s===m.sender_id&&lastEl.day===day&&+d-lastEl.t<300000&&lastEl.el.parentNode===box){lastEl.el.classList.add('gn');el.classList.add('gp')}lastEl={s:m.sender_id,day,t:+d,el};
   box.appendChild(el);paintRx(m.id);paintTick(m.id);if(m.sender_id!==me)markSoon();
   if(stick||m.sender_id===me)down();
 }
@@ -178,11 +190,16 @@ function listen(){
       if(p.eventType==='DELETE'){const o=rx.get(p.old.message_id);if(o){delete o[p.old.user_id];paintRx(p.old.message_id)}}
       else{const r=p.new,o=rx.get(r.message_id)||{};o[r.user_id]=r.emoji;rx.set(r.message_id,o);paintRx(r.message_id)}})
    .on('postgres_changes',{event:'*',schema:'public',table:'receipts'},p=>{if(p.eventType!=='DELETE'){rc.set(p.new.message_id,p.new);paintTick(p.new.message_id)}})
+   .on('postgres_changes',{event:'UPDATE',schema:'public',table:'messages'},p=>{
+      const m=p.new;cache.set(m.id,{...(cache.get(m.id)||{}),...m});
+      const el=document.querySelector(`.m[data-id="${m.id}"]`);if(!el)return;
+      const bd=el.querySelector('.bd');if(bd)bd.innerHTML=linkify(m.body||'');
+      const t=el.querySelector('.t');if(t&&t.firstChild)t.firstChild.nodeValue=timeStr(m)})
    .subscribe();
 }
 
-async function start(u){me=u.id;shown.clear();cache.clear();rx.clear();rc.clear();lastDay='';$('msgs').innerHTML='';
-  if(!lockNow())show('chat');await load();listen()}
+async function start(u){me=u.id;shown.clear();cache.clear();rx.clear();rc.clear();lastDay='';lastEl=null;$('msgs').innerHTML='';
+  if(!lockNow())show('chat');await load();listen();joinRoom()}
 
 /* ---------- delivered / seen ---------- */
 function paintTick(id){
@@ -203,13 +220,13 @@ async function markRead(){
 
 /* ---------- actions ---------- */
 let target=null;
-$('msgs').onclick=e=>{
+$('msgs').onclick=e=>{if(swiped)return;
   const el=e.target.closest('.m');if(!el||e.target.closest('a'))return;
   const i=e.target.closest('img');if(i&&i.src){openLb(i.src);return}
   target=cache.get(+el.dataset.id);if(!target)return;
   $('emo').innerHTML=EMO.map(x=>`<button data-e="${x}">${x}</button>`).join('');
   const own=target.sender_id===me;
-  $('acts').innerHTML=`<button data-a="rep"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg> Reply</button>${target.body?'<button data-a="cp"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>':''}${own?'<button class="dl" data-a="del"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Delete</button>':''}`;
+  $('acts').innerHTML=`<button data-a="rep"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg> Reply</button>${target.body?'<button data-a="cp"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>':''}${own&&target.body?'<button data-a="ed"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg> Edit</button>':''}${own?'<button class="dl" data-a="del"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Delete</button>':''}`;
   $('sh').classList.add('on');
 };
 $('sh').onclick=async e=>{
@@ -219,18 +236,23 @@ $('sh').onclick=async e=>{
     const mine=(rx.get(target.id)||{})[me];
     if(mine===b.dataset.e)await sb.from('reactions').delete().eq('message_id',target.id).eq('user_id',me);
     else await sb.from('reactions').upsert({message_id:target.id,user_id:me,emoji:b.dataset.e});
-  }else if(b.dataset.a==='rep'){reply=target.id;$('rept').textContent='Replying to: '+snip(target);$('rep').style.display='flex';$('txt').focus()}
+  }else if(b.dataset.a==='rep')startReply(target);
+  else if(b.dataset.a==='ed'){reply=null;editing=target.id;$('rept').textContent='Editing message';$('rep').style.display='flex';$('txt').value=target.body;$('txt').dispatchEvent(new Event('input'));$('txt').focus()}
   else if(b.dataset.a==='cp')navigator.clipboard&&navigator.clipboard.writeText(target.body);
   else if(b.dataset.a==='del'&&confirm('This message will be deleted for everyone. Delete it?')){
     const {error}=await sb.from('messages').delete().eq('id',target.id);
     if(error)alert('Could not delete the message.');else if(target.image_path)sb.storage.from('photos').remove([target.image_path]);
   }
 };
-const clearRep=()=>{reply=null;$('rep').style.display='none'};
+const clearRep=()=>{reply=null;if(editing){editing=null;$('txt').value='';$('txt').style.height='auto'}$('rep').style.display='none'};
+function startReply(m){editing=null;reply=m.id;$('rept').textContent='Replying to: '+snip(m);$('rep').style.display='flex';$('txt').focus();if(navigator.vibrate)navigator.vibrate(10)}
 $('repx').onclick=clearRep;
 
 async function sendText(){
   const body=$('txt').value.trim();if(!body)return;
+  if(editing){const id=editing;editing=null;$('rep').style.display='none';$('txt').value='';$('txt').style.height='auto';
+    const {error}=await sb.from('messages').update({body,edited_at:new Date().toISOString()}).eq('id',id);
+    if(error)alert('Could not edit the message.');return}
   $('txt').value='';$('txt').style.height='auto';const rt=reply;clearRep();
   const {error}=await sb.from('messages').insert({body,reply_to:rt});
   if(error){$('txt').value=body;alert('Message not sent. Check your connection and try again.')}
@@ -246,6 +268,28 @@ async function sendPhoto(f){
   catch(e){console.error(e);alert('Could not send the photo. Please try again.')}
   $('pick').disabled=false;$('file').value='';
 }
+
+/* ---------- swipe to reply ---------- */
+const M=$('msgs');
+M.addEventListener('touchstart',e=>{const b=e.target.closest('.m');if(!b)return;const t=e.touches[0];sw={b,x:t.clientX,y:t.clientY,dx:0,on:false}},{passive:true});
+M.addEventListener('touchmove',e=>{if(!sw)return;const t=e.touches[0],dx=t.clientX-sw.x,dy=t.clientY-sw.y;
+  if(!sw.on){if(Math.abs(dy)>12&&Math.abs(dy)>Math.abs(dx)){sw=null;return}if(dx>12&&dx>Math.abs(dy))sw.on=true}
+  if(sw.on){sw.dx=Math.min(dx,72);sw.b.style.transition='none';sw.b.style.transform=`translateX(${sw.dx}px)`}},{passive:true});
+M.addEventListener('touchend',()=>{if(!sw)return;const {b,dx,on}=sw;sw=null;b.style.transition='transform .2s';b.style.transform='';
+  if(on){swiped=true;setTimeout(()=>{swiped=false},350);if(dx>56){const m=cache.get(+b.dataset.id);if(m)startReply(m)}}});
+
+/* ---------- settings, typing, presence ---------- */
+$('menu').onclick=()=>$('st').classList.add('on');
+$('st').onclick=e=>{if(e.target.id==='st'||e.target.closest('button'))$('st').classList.remove('on')};
+function setStat(){const el=$('stat'),ty=el.dataset.typing==='1';el.textContent=ty?'typing…':(peerOn?'Online':'Offline');el.className=(ty||peerOn)?'on':''}
+function joinRoom(){
+  if(room)sb.removeChannel(room);
+  room=sb.channel('room',{config:{presence:{key:me}}});
+  room.on('presence',{event:'sync'},()=>{peerOn=Object.keys(room.presenceState()).some(k=>k!==me);setStat()})
+    .on('broadcast',{event:'typing'},({payload})=>{if(payload&&payload.u===me)return;const el=$('stat');el.dataset.typing='1';setStat();clearTimeout(tmo);tmo=setTimeout(()=>{el.dataset.typing='0';setStat()},3000)})
+    .subscribe(async st=>{if(st==='SUBSCRIBED')await room.track({at:Date.now()})});
+}
+function typingPing(){const n=Date.now();if(!room||n-typT<2000)return;typT=n;room.send({type:'broadcast',event:'typing',payload:{u:me}})}
 
 /* ---------- gallery ---------- */
 function openLb(u){$('lbi').src=u;$('lbd').href=u;$('lb').classList.add('on')}
@@ -280,8 +324,8 @@ async function login(){
 }
 $('go').onclick=login;$('pw').onkeydown=e=>{if(e.key==='Enter')login()};
 $('send').onclick=sendText;$('pick').onclick=()=>$('file').click();$('file').onchange=e=>sendPhoto(e.target.files[0]);
-$('txt').oninput=e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight+2,122)+'px'};
-$('out').onclick=async()=>{if(!confirm('Sign out?'))return;await sb.auth.signOut();if(chan)sb.removeChannel(chan);me=null;show('login')};
+$('txt').oninput=e=>{typingPing();e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight+2,122)+'px'};
+$('out').onclick=async()=>{if(!confirm('Sign out?'))return;await sb.auth.signOut();if(chan)sb.removeChannel(chan);if(room)sb.removeChannel(room);me=null;show('login')};
 (async()=>{const {data:{session}}=await sb.auth.getSession();if(session)start(session.user);else show('login')})();
 const VAPID='BEbPi_wfjiT4vHOalWkwbJTVSFh2oRKHR-P6YAWaZhjolCQeJ5V6ZEv5oi-9FpX6BsY0snbxxPg_BGYNk08NkeI';
 const u8=s=>{const r=atob((s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(r,c=>c.charCodeAt(0))};

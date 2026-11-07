@@ -1,5 +1,5 @@
-const C='chat-v2';
-self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll(['./','index.html','manifest.json','icon.svg'])).catch(()=>{}))});
+const C='chat-v3';
+self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll(['./','index.html','manifest.json','icon.svg','icon-192.png','icon-512.png'])).catch(()=>{}))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{
   const r=e.request;
@@ -8,7 +8,7 @@ self.addEventListener('fetch',e=>{
 });
 self.addEventListener('push',e=>{
   let d={};try{d=e.data.json()}catch(_){}
-  e.waitUntil(self.registration.showNotification(d.title||'Our Chat',{body:d.body||'New message',icon:'icon.svg',badge:'icon.svg',tag:'chat'}));
+  e.waitUntil(self.registration.showNotification(d.title||'Alcove',{body:d.body||'New message',icon:'icon.svg',badge:'icon.svg',tag:'chat'}));
 });
 self.addEventListener('notificationclick',e=>{
   e.notification.close();
