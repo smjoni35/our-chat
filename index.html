@@ -9,6 +9,7 @@
 <title>Alcove</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>try{var t=localStorage.getItem("theme");if(t&&t!=="auto")document.documentElement.setAttribute("data-theme",t);var A={rose:"#b83b5e",plum:"#7a4fa3",ocean:"#2f6fb0",forest:"#2e8b6a",amber:"#c47a1e"},k=localStorage.getItem("accent");if(k&&A[k])document.documentElement.style.setProperty("--rose",A[k])}catch(e){}</script>
 <style>
 :root{--bg:#fbf5f3;--ink:#2a1f26;--mute:#8a7780;--rose:#b83b5e;--card:#fff;--line:#ecdfe2;--them:#fff}
 @media (prefers-color-scheme:dark){:root{--bg:#1b1418;--ink:#f3e8ec;--mute:#a48f98;--card:#271c22;--line:#3a2b33;--them:#2c2026}}
@@ -49,6 +50,25 @@ header{background:var(--card);border-bottom:1px solid var(--line);padding-top:en
 #msgs{touch-action:pan-y}.m{will-change:transform}
 .m.me:not(.gn){border-bottom-right-radius:4px}.m:not(.me):not(.gn){border-bottom-left-radius:4px}
 .m.gp{margin-top:-3px}.m.me.gn{border-bottom-right-radius:6px}.m.me.gp{border-top-right-radius:6px}.m:not(.me).gn{border-bottom-left-radius:6px}.m:not(.me).gp{border-top-left-radius:6px}.m.gn .t{display:none}
+html[data-theme=light]{--bg:#fbf5f3;--ink:#2a1f26;--mute:#8a7780;--card:#fff;--line:#ecdfe2;--them:#fff}
+html[data-theme=dark]{--bg:#1b1418;--ink:#f3e8ec;--mute:#a48f98;--card:#271c22;--line:#3a2b33;--them:#2c2026}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.m.new{animation:pop .22s ease-out}.ov.on{animation:fade .18s}.ov.on #shc,.ov.on #stc{animation:up .24s ease-out}
+.m img{opacity:0;filter:blur(8px);transition:opacity .4s,filter .4s}.m img.ld{opacity:1;filter:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+#splash{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:opacity .45s}
+#splash.off{opacity:0;pointer-events:none}#splash b{font-size:22px;font-weight:600;letter-spacing:.05em}
+.hbw{display:flex;align-items:center}
+#sbar{display:none;gap:8px;align-items:center;padding:0 12px 8px}#sbar.on{display:flex}
+#sq{flex:1;padding:9px 14px;border:1px solid var(--line);border-radius:20px;background:var(--bg);color:var(--ink);outline:none;font-size:15px}#sq:focus{border-color:var(--rose)}
+#pinbar{display:none;align-items:center;gap:8px;padding:8px 16px;font-size:13px;color:var(--mute);border-top:1px solid var(--line);cursor:pointer}
+#pinbar .i{width:16px;height:16px;color:var(--rose)}#pint{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.m.flash{outline:2px solid var(--rose)}
+.swr{display:flex;align-items:center;justify-content:space-between;padding:12px 6px;border-top:1px solid var(--line);font-size:16px}
+.swr>span{display:flex;align-items:center;gap:12px}.sw{display:flex;gap:8px}
+#stl .sw button{width:30px;height:30px;border-radius:50%;padding:0;border:2px solid transparent;display:block}#stl .sw button.act{border-color:var(--ink)}
 .empty{margin:auto;color:var(--mute);text-align:center}
 #bar{background:var(--card);border-top:1px solid var(--line);padding:8px 12px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
 #rep{display:none;justify-content:space-between;align-items:center;padding:4px 10px;margin-bottom:6px;border-left:3px solid var(--rose);background:var(--bg);font-size:13px;color:var(--mute)}
@@ -71,6 +91,7 @@ header{background:var(--card);border-bottom:1px solid var(--line);padding-top:en
 </style>
 </head>
 <body>
+<div id="splash"><img class="logo" src="icon.svg" alt=""><b>Alcove</b></div>
 <section id="login" class="screen center on" style="display:none">
   <img class="logo" src="icon.svg" alt=""><h1>Alcove</h1><p>Private. Yours. Always.</p>
   <input id="em" class="f" type="email" placeholder="Email" autocomplete="username">
@@ -86,8 +107,10 @@ header{background:var(--card);border-bottom:1px solid var(--line);padding-top:en
 
 <section id="chat" class="screen">
   <header>
-    <div class="top"><div class="ttl"><b>Alcove</b><small id="stat">Offline</small></div><button id="menu" class="hb" aria-label="Settings"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></button></div>
+    <div class="top"><div class="ttl"><b>Alcove</b><small id="stat">Offline</small></div><div class="hbw"><button id="srch" class="hb" aria-label="Search"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button><button id="menu" class="hb" aria-label="Settings"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></button></div></div>
+    <div id="sbar"><input id="sq" type="search" placeholder="Search messages" autocomplete="off"><button id="sqx" class="hb" aria-label="Close search"><svg class="i" viewBox="0 0 24 24"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button></div>
     <div class="tabs"><button id="t1" class="on">Chat</button><button id="t2">Gallery</button></div>
+  <div id="pinbar"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17v5"/><path d="M5 17h14v-1.8a2 2 0 0 0-1.1-1.8L16 12.5V4h1V2H7v2h1v8.5l-1.9.9A2 2 0 0 0 5 15.2z"/></svg><span id="pint"></span></div>
   </header>
   <div id="msgs" class="pane on"></div>
   <div id="grid" class="pane"></div>
@@ -102,7 +125,7 @@ header{background:var(--card);border-bottom:1px solid var(--line);padding-top:en
   </div>
 </section>
 
-<div id="st" class="ov"><div id="stc"><div class="stt">Settings</div><div id="stl"><button id="bell"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifications</button><button id="setpin"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> App lock (PIN)</button><button id="out" class="dl"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg> Sign out</button></div></div></div>
+<div id="st" class="ov"><div id="stc"><div class="stt">Settings</div><div id="stl"><button id="bell"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifications</button><button id="setpin"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> App lock (PIN)</button><button id="alk" data-keep="1"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> <span>Auto-lock: 30 seconds</span></button><button id="thm" data-keep="1"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg> <span>Theme: Auto</span></button><div class="swr"><span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16" cy="10" r="1"/></svg> Accent colour</span><div class="sw" id="acc"></div></div><button id="exp"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg> Export chat (JSON)</button><button id="out" class="dl"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg> Sign out</button></div></div></div>
 <div id="lb" class="ov"><img id="lbi" alt=""><div><a id="lbd" download="photo.jpg">Save</a><button id="lbx">Close</button></div></div>
 <div id="sh" class="ov"><div id="shc"><div id="emo"></div><div id="acts"></div></div></div>
 
@@ -111,6 +134,7 @@ const sb=supabase.createClient('https://ockrtfffgqttdrglvdwe.supabase.co','sb_pu
 const $=id=>document.getElementById(id),EMO=['❤️','😂','😮','😢','👍'];
 let me=null,chan=null,lastDay='',reply=null,hiddenAt=0,gridDone=false;
 const cache=new Map(),shown=new Set(),rx=new Map(),urls=new Map(),rc=new Map();
+const pins=new Map();let pinIdx=0;
 let editing=null,lastEl=null,swiped=false,sw=null,room=null,typT=0,tmo=null,peerOn=false;
 
 function show(id){document.querySelectorAll('.screen').forEach(s=>{s.classList.toggle('on',s.id===id);s.style.display=''})}
@@ -141,7 +165,7 @@ document.addEventListener('visibilitychange',()=>{
   if(document.hidden){hiddenAt=Date.now();if(room)room.untrack();return}
   if(!me)return;
   if(room)room.track({at:Date.now()});
-  if(Date.now()-hiddenAt>30000)lockNow();
+  const lm=+(localStorage.getItem('lockms')||30000);if(lm>=0&&Date.now()-hiddenAt>=lm)lockNow();
   load();
 });
 
@@ -151,14 +175,14 @@ function paintRx(id){
   const c={};Object.values(rx.get(id)||{}).forEach(e=>c[e]=(c[e]||0)+1);
   el.innerHTML=Object.entries(c).map(([e,n])=>`<i>${e}${n>1?' '+n:''}</i>`).join('');
 }
-function render(m){
+function render(m,anim){
   if(shown.has(m.id))return;shown.add(m.id);cache.set(m.id,m);
   const box=$('msgs'),stick=near(),d=new Date(m.created_at),emp=box.querySelector('.empty');if(emp)emp.remove();
   if(d.toDateString()!==lastDay){lastDay=d.toDateString();const x=document.createElement('div');x.className='day';x.textContent=d.toLocaleDateString('en-US',{day:'numeric',month:'long',year:'numeric'});box.appendChild(x)}
-  const el=document.createElement('div');el.className='m'+(m.sender_id===me?' me':'');el.dataset.id=m.id;
+  const el=document.createElement('div');el.className='m'+(m.sender_id===me?' me':'');el.dataset.id=m.id;if(anim)el.classList.add('new');
   if(m.reply_to){const q=document.createElement('div');q.className='q';q.textContent=snip(cache.get(m.reply_to));el.appendChild(q)}
   if(m.image_path){const i=document.createElement('img');i.alt='Photo';el.appendChild(i);
-    sign(m.image_path).then(u=>{if(u){i.src=u;i.onload=()=>{if(stick)down()}}});i.dataset.p=m.image_path}
+    sign(m.image_path).then(u=>{if(u){i.src=u;i.onload=()=>{i.classList.add('ld');if(stick)down()}}});i.dataset.p=m.image_path}
   if(m.body){const s=document.createElement('span');s.className='bd';s.innerHTML=linkify(m.body);el.appendChild(s)}
   const t=document.createElement('span');t.className='t';t.textContent=timeStr(m);if(m.sender_id===me){const k=document.createElement('span');k.className='tk';t.appendChild(k)}el.appendChild(t);
   const r=document.createElement('div');r.className='rx';el.appendChild(r);
@@ -168,13 +192,14 @@ function render(m){
 }
 
 async function load(){
-  const [a,b,c]=await Promise.all([
-    sb.from('messages').select('*').order('created_at',{ascending:false}).limit(200),
-    sb.from('reactions').select('*'),sb.from('receipts').select('*')]);
+  const [a,b,c,pn]=await Promise.all([
+    sb.from('messages').select('*').order('created_at',{ascending:false}).limit(500),
+    sb.from('reactions').select('*'),sb.from('receipts').select('*'),sb.from('pins').select('*')]);
   if(a.error){console.error(a.error);return}
   (c.data||[]).forEach(r=>rc.set(r.message_id,r));
+  pins.clear();(pn.data||[]).forEach(r=>pins.set(r.message_id,r));
   (b.data||[]).forEach(r=>{const o=rx.get(r.message_id)||{};o[r.user_id]=r.emoji;rx.set(r.message_id,o)});
-  a.data.reverse().forEach(render);
+  a.data.reverse().forEach(render);paintPins();
   rx.forEach((_,id)=>paintRx(id));
   if(!shown.size)$('msgs').innerHTML='<div class="empty">No messages yet.<br>Send the first one.</div>';
   down();
@@ -183,7 +208,7 @@ async function load(){
 function listen(){
   if(chan)sb.removeChannel(chan);
   chan=sb.channel('live')
-   .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},p=>{render(p.new);gridDone=false})
+   .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},p=>{render(p.new,true);gridDone=false})
    .on('postgres_changes',{event:'DELETE',schema:'public',table:'messages'},p=>{
       const el=document.querySelector(`.m[data-id="${p.old.id}"]`);if(el)el.remove();cache.delete(p.old.id);shown.delete(p.old.id);gridDone=false})
    .on('postgres_changes',{event:'*',schema:'public',table:'reactions'},p=>{
@@ -195,6 +220,7 @@ function listen(){
       const el=document.querySelector(`.m[data-id="${m.id}"]`);if(!el)return;
       const bd=el.querySelector('.bd');if(bd)bd.innerHTML=linkify(m.body||'');
       const t=el.querySelector('.t');if(t&&t.firstChild)t.firstChild.nodeValue=timeStr(m)})
+   .on('postgres_changes',{event:'*',schema:'public',table:'pins'},p=>{if(p.eventType==='DELETE')pins.delete(p.old.message_id);else pins.set(p.new.message_id,p.new);paintPins()})
    .subscribe();
 }
 
@@ -226,7 +252,7 @@ $('msgs').onclick=e=>{if(swiped)return;
   target=cache.get(+el.dataset.id);if(!target)return;
   $('emo').innerHTML=EMO.map(x=>`<button data-e="${x}">${x}</button>`).join('');
   const own=target.sender_id===me;
-  $('acts').innerHTML=`<button data-a="rep"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg> Reply</button>${target.body?'<button data-a="cp"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>':''}${own&&target.body?'<button data-a="ed"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg> Edit</button>':''}${own?'<button class="dl" data-a="del"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Delete</button>':''}`;
+  $('acts').innerHTML=`<button data-a="rep"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg> Reply</button><button data-a="pin"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17v5"/><path d="M5 17h14v-1.8a2 2 0 0 0-1.1-1.8L16 12.5V4h1V2H7v2h1v8.5l-1.9.9A2 2 0 0 0 5 15.2z"/></svg> ${pins.has(target.id)?'Unpin':'Pin'}</button>${target.body?'<button data-a="cp"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>':''}${own&&target.body?'<button data-a="ed"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg> Edit</button>':''}${own?'<button class="dl" data-a="del"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Delete</button>':''}`;
   $('sh').classList.add('on');
 };
 $('sh').onclick=async e=>{
@@ -237,6 +263,7 @@ $('sh').onclick=async e=>{
     if(mine===b.dataset.e)await sb.from('reactions').delete().eq('message_id',target.id).eq('user_id',me);
     else await sb.from('reactions').upsert({message_id:target.id,user_id:me,emoji:b.dataset.e});
   }else if(b.dataset.a==='rep')startReply(target);
+  else if(b.dataset.a==='pin'){if(pins.has(target.id))await sb.from('pins').delete().eq('message_id',target.id);else await sb.from('pins').insert({message_id:target.id})}
   else if(b.dataset.a==='ed'){reply=null;editing=target.id;$('rept').textContent='Editing message';$('rep').style.display='flex';$('txt').value=target.body;$('txt').dispatchEvent(new Event('input'));$('txt').focus()}
   else if(b.dataset.a==='cp')navigator.clipboard&&navigator.clipboard.writeText(target.body);
   else if(b.dataset.a==='del'&&confirm('This message will be deleted for everyone. Delete it?')){
@@ -280,7 +307,7 @@ M.addEventListener('touchend',()=>{if(!sw)return;const {b,dx,on}=sw;sw=null;b.st
 
 /* ---------- settings, typing, presence ---------- */
 $('menu').onclick=()=>$('st').classList.add('on');
-$('st').onclick=e=>{if(e.target.id==='st'||e.target.closest('button'))$('st').classList.remove('on')};
+$('st').onclick=e=>{if(e.target.id==='st'||e.target.closest('button:not([data-keep])'))$('st').classList.remove('on')};
 function setStat(){const el=$('stat'),ty=el.dataset.typing==='1';el.textContent=ty?'typing…':(peerOn?'Online':'Offline');el.className=(ty||peerOn)?'on':''}
 function joinRoom(){
   if(room)sb.removeChannel(room);
@@ -313,6 +340,56 @@ function tab(n){
   if(n===2&&!gridDone)buildGrid();else if(n===1){down();markSoon()}
 }
 $('t1').onclick=()=>tab(1);$('t2').onclick=()=>tab(2);
+
+/* ---------- pins, search, theme, auto-lock, export ---------- */
+const pinList=()=>[...pins.values()].sort((a,b)=>b.created_at.localeCompare(a.created_at));
+function paintPins(){
+  const l=pinList(),bar=$('pinbar');if(!l.length){bar.style.display='none';return}
+  pinIdx%=l.length;const m=cache.get(l[pinIdx].message_id);
+  bar.style.display='flex';$('pint').textContent=(l.length>1?'Pinned '+(pinIdx+1)+'/'+l.length+': ':'Pinned: ')+snip(m);
+}
+$('pinbar').onclick=()=>{
+  const l=pinList();if(!l.length)return;tab(1);
+  const el=document.querySelector('.m[data-id="'+l[pinIdx].message_id+'"]');
+  if(el){el.style.display='';el.scrollIntoView({block:'center',behavior:'smooth'});el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1300)}
+  pinIdx=(pinIdx+1)%l.length;paintPins();
+};
+function doSearch(q){
+  q=q.trim().toLowerCase();const box=$('msgs');
+  box.querySelectorAll('.m').forEach(el=>{const m=cache.get(+el.dataset.id);el.style.display=(!q||(m&&m.body&&m.body.toLowerCase().includes(q)))?'':'none'});
+  box.querySelectorAll('.day').forEach(d=>{d.style.display=q?'none':''});
+}
+$('srch').onclick=()=>{tab(1);$('sbar').classList.add('on');$('sq').focus()};
+$('sq').oninput=e=>doSearch(e.target.value);
+$('sqx').onclick=()=>{$('sq').value='';doSearch('');$('sbar').classList.remove('on');down()};
+
+const ACC={rose:'#b83b5e',plum:'#7a4fa3',ocean:'#2f6fb0',forest:'#2e8b6a',amber:'#c47a1e'};
+const THEMES=['auto','light','dark'],LOCKS=[[0,'Immediately'],[30000,'30 seconds'],[60000,'1 minute'],[300000,'5 minutes'],[-1,'Never']];
+function applyLook(){
+  const t=localStorage.getItem('theme')||'auto',k=localStorage.getItem('accent')||'rose',h=document.documentElement;
+  if(t==='auto')h.removeAttribute('data-theme');else h.setAttribute('data-theme',t);
+  h.style.setProperty('--rose',ACC[k]||ACC.rose);
+  const mt=document.querySelector('meta[name=theme-color]');if(mt)mt.content=ACC[k]||ACC.rose;
+}
+function paintSet(){
+  const t=localStorage.getItem('theme')||'auto',k=localStorage.getItem('accent')||'rose',lm=+(localStorage.getItem('lockms')||30000);
+  $('thm').querySelector('span').textContent='Theme: '+t[0].toUpperCase()+t.slice(1);
+  const L=LOCKS.find(x=>x[0]===lm)||LOCKS[1];$('alk').querySelector('span').textContent='Auto-lock: '+L[1];
+  $('acc').querySelectorAll('button').forEach(b=>b.classList.toggle('act',b.dataset.k===k));
+}
+Object.entries(ACC).forEach(([k,c])=>{
+  const b=document.createElement('button');b.dataset.keep='1';b.dataset.k=k;b.style.background=c;b.setAttribute('aria-label',k+' accent');
+  b.onclick=()=>{localStorage.setItem('accent',k);applyLook();paintSet()};$('acc').appendChild(b);
+});
+$('thm').onclick=()=>{const t=localStorage.getItem('theme')||'auto';localStorage.setItem('theme',THEMES[(THEMES.indexOf(t)+1)%3]);applyLook();paintSet()};
+$('alk').onclick=()=>{const lm=+(localStorage.getItem('lockms')||30000);const i=Math.max(0,LOCKS.findIndex(x=>x[0]===lm));localStorage.setItem('lockms',LOCKS[(i+1)%LOCKS.length][0]);paintSet()};
+$('exp').onclick=async()=>{
+  const {data,error}=await sb.from('messages').select('*').order('created_at');
+  if(error){alert('Could not export the chat.');return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  a.download='alcove-chat-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+};
+applyLook();paintSet();setTimeout(()=>$('splash').classList.add('off'),900);
 
 /* ---------- login ---------- */
 async function login(){
