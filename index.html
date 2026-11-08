@@ -133,6 +133,24 @@ html[data-theme=dark]{--bg:#1b1418;--ink:#f3e8ec;--mute:#a48f98;--card:#271c22;-
   .m.me .mh{right:calc(100% + 8px)}.m:not(.me) .mh{left:calc(100% + 8px)}
   .m:hover .mh{opacity:1}
 }
+
+/* ---------- extras ---------- */
+#chat{position:relative}
+#dn{position:absolute;right:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px));display:none;box-shadow:0 4px 14px rgba(0,0,0,.18);z-index:5}
+#dn.on{display:inline-flex}
+#dnc{position:absolute;top:-6px;right:-4px;min-width:20px;height:20px;border-radius:10px;background:var(--rose);color:#fff;font-size:11px;font-weight:600;line-height:20px;text-align:center;padding:0 5px}#dnc:empty{display:none}
+.m.jb{background:none!important;border-color:transparent!important;font-size:40px;line-height:1.2;padding:2px 6px;box-shadow:none!important}.m.jb .t{color:var(--mute);opacity:1}
+@media (min-width:900px){
+  header{box-shadow:0 1px 10px rgba(0,0,0,.05)}
+  .m{box-shadow:0 1px 2px rgba(0,0,0,.06)}
+  .m.me{background:linear-gradient(135deg,var(--rose),color-mix(in srgb,var(--rose) 75%,#000))}
+  .day{background:var(--card);border:1px solid var(--line);padding:3px 12px;border-radius:12px}
+  #txt{border-radius:24px;transition:box-shadow .15s,border-color .15s}
+  #txt:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--rose) 22%,transparent)}
+  #txt:placeholder-shown~#send{opacity:.45}
+  #lb{cursor:zoom-out}#lb img{cursor:default;border-radius:6px;box-shadow:0 10px 50px rgba(0,0,0,.5)}
+  #dn{bottom:92px;right:24px}
+}
 </style>
 </head>
 <body>
@@ -160,6 +178,7 @@ html[data-theme=dark]{--bg:#1b1418;--ink:#f3e8ec;--mute:#a48f98;--card:#271c22;-
   <div id="msgs" class="pane on"></div>
   <div id="grid" class="pane"></div>
   <div id="plans" class="pane"></div>
+  <button id="dn" class="ic alt" aria-label="Latest messages"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><b id="dnc"></b></button>
   <div id="bar">
     <div id="rep"><span id="rept"></span><button id="repx" aria-label="Cancel"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button></div>
     <div id="recbar"><span class="dot"></span><span id="rect">0:00</span><span style="flex:1;color:var(--mute);font-size:13px">Tap the mic to send</span><button id="recx">Cancel</button></div>
@@ -234,12 +253,14 @@ function render(m,anim){
   else if(m.image_path){const i=document.createElement('img');i.alt='Photo';el.appendChild(i);
     sign(m.image_path).then(u=>{if(u){i.src=u;i.onload=()=>{i.classList.add('ld');if(stick)down()}}});i.dataset.p=m.image_path}
   if(m.audio_path){const a=document.createElement('audio');a.controls=true;a.preload='metadata';el.appendChild(a);sign(m.audio_path).then(u=>{if(u)a.src=u})}
-  if(m.body){const s=document.createElement('span');s.className='bd';s.innerHTML=linkify(m.body);el.appendChild(s)}
+  if(m.body){const s=document.createElement('span');s.className='bd';s.innerHTML=linkify(m.body);el.appendChild(s);
+    if(!m.image_path&&!m.reply_to&&window.Intl&&Intl.Segmenter){const g=[...new Intl.Segmenter().segment(m.body.trim())];if(g.length&&g.length<=3&&g.every(x=>/\p{Extended_Pictographic}/u.test(x.segment)))el.classList.add('jb')}}
   const t=document.createElement('span');t.className='t';t.textContent=timeStr(m);if(m.sender_id===me){const k=document.createElement('span');k.className='tk';t.appendChild(k)}el.appendChild(t);
   const r=document.createElement('div');r.className='rx';el.appendChild(r);const hb2=document.createElement('button');hb2.className='mh';hb2.setAttribute('aria-label','Reply');hb2.innerHTML='<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>';el.appendChild(hb2);
   const day=d.toDateString();if(lastEl&&lastEl.s===m.sender_id&&lastEl.day===day&&+d-lastEl.t<300000&&lastEl.el.parentNode===box){lastEl.el.classList.add('gn');el.classList.add('gp')}lastEl={s:m.sender_id,day,t:+d,el};
   box.appendChild(el);paintRx(m.id);paintTick(m.id);if(m.sender_id!==me)markSoon();
-  if(stick||m.sender_id===me)down();
+  if(anim&&m.sender_id!==me&&document.hidden){unread++;document.title='('+unread+') Alcove'}
+  if(stick||m.sender_id===me)down();else if(anim&&m.sender_id!==me){unseen++;paintDn()}
 }
 
 async function load(){
@@ -394,7 +415,7 @@ function tab(n){
   $('msgs').classList.toggle('on',n===1);$('grid').classList.toggle('on',n===2);$('plans').classList.toggle('on',n===3);
   $('bar').style.display=n===1?'':'none';
   if(n===2&&!gridDone)buildGrid();else if(n===1){down();markSoon();if(fp())$('txt').focus()}
-  if(n===3)loadPlans();
+  if(n===3)loadPlans();paintDn();
 }
 $('t1').onclick=()=>tab(1);$('t2').onclick=()=>tab(2);$('t3').onclick=()=>tab(3);
 
@@ -563,6 +584,33 @@ function takeImg(f){if(f&&f.type.startsWith('image/')){pendingFile=f;$('ps').cla
 $('txt').addEventListener('paste',e=>{const f=[...(e.clipboardData&&e.clipboardData.files||[])][0];if(takeImg(f))e.preventDefault()});
 $('chat').addEventListener('dragover',e=>e.preventDefault());
 $('chat').addEventListener('drop',e=>{e.preventDefault();takeImg([...e.dataTransfer.files][0])});
+/* ---------- extras: unread, jump-to-latest, shortcuts ---------- */
+let unseen=0,unread=0;
+function paintDn(){
+  const msgs=$('msgs'),nr=near();if(nr)unseen=0;
+  const on=msgs.classList.contains('on')&&!nr;
+  $('dn').classList.toggle('on',on);$('dnc').textContent=on&&unseen?(unseen>99?'99+':unseen):'';
+}
+$('msgs').addEventListener('scroll',paintDn,{passive:true});
+$('dn').onclick=()=>{unseen=0;$('msgs').scrollTo({top:$('msgs').scrollHeight,behavior:'smooth'})};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){unread=0;document.title='Alcove'}});
+$('msgs').addEventListener('contextmenu',e=>{const el=e.target.closest('.m');if(!el||e.target.closest('img,a,audio'))return;e.preventDefault();el.click()});
+$('txt').addEventListener('keydown',e=>{
+  if(e.key!=='ArrowUp'||$('txt').value||!fp())return;
+  const mine=[...cache.values()].filter(m=>m.sender_id===me&&m.body).pop();if(!mine)return;
+  e.preventDefault();reply=null;editing=mine.id;$('rept').textContent='Editing message';$('rep').style.display='flex';$('txt').value=mine.body;$('txt').dispatchEvent(new Event('input'));
+});
+function lbStep(d){
+  if(onceId)return;
+  const l=[...cache.values()].filter(m=>m.image_path&&!m.view_once&&urls.get(m.image_path)).sort((a,b)=>a.created_at.localeCompare(b.created_at));
+  const i=l.findIndex(m=>urls.get(m.image_path)===$('lbi').src),n=l[i+d];
+  if(i>=0&&n){$('lbi').src=urls.get(n.image_path);$('lbd').href=$('lbi').src}
+}
+$('lb').addEventListener('click',e=>{if(e.target.id==='lb')closeLb()});
+document.addEventListener('keydown',e=>{
+  if($('lb').classList.contains('on')&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){lbStep(e.key==='ArrowLeft'?-1:1);return}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'&&$('chat').classList.contains('on')){e.preventDefault();$('srch').click()}
+});
 const VAPID='BEbPi_wfjiT4vHOalWkwbJTVSFh2oRKHR-P6YAWaZhjolCQeJ5V6ZEv5oi-9FpX6BsY0snbxxPg_BGYNk08NkeI';
 const u8=s=>{const r=atob((s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(r,c=>c.charCodeAt(0))};
 $('bell').onclick=async()=>{
