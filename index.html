@@ -697,6 +697,8 @@ window.addEventListener('popstate',goInbox);
 function openInitial(){
   renderInbox();
   if(!convs.size){if(!locked())show('chat');return}
+  const qc=new URLSearchParams(location.search).get('c');
+  if(qc&&convs.has(qc)){history.replaceState(null,'',location.pathname);openConv(qc);return}
   if(desk()){const l=localStorage.getItem('lastConv');openConv(convs.has(l)?l:[...convs.keys()][0])}
 }
 function openApp(){show(!convs.size||(curConv&&!desk())?'chat':'inbox');setTimeout(down,50);markSoon()}
@@ -735,6 +737,7 @@ function beep(){if(localStorage.getItem('snd')==='0'||!actx)return;const o=actx.
   g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(.12,n+.02);g.gain.exponentialRampToValueAtTime(.0001,n+.35);o.connect(g);g.connect(actx.destination);o.start();o.stop(n+.4)}
 function paintSnd(){$('snd').querySelector('span').textContent='Sound: '+(localStorage.getItem('snd')==='0'?'Off':'On')}
 $('snd').onclick=()=>{localStorage.setItem('snd',localStorage.getItem('snd')==='0'?'1':'0');paintSnd();beep()};paintSnd();
+if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',e=>{const c=e.data&&e.data.conv;if(c&&convs.has(c)&&!locked())openConv(c)});
 const VAPID='BEbPi_wfjiT4vHOalWkwbJTVSFh2oRKHR-P6YAWaZhjolCQeJ5V6ZEv5oi-9FpX6BsY0snbxxPg_BGYNk08NkeI';
 const u8=s=>{const r=atob((s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(r,c=>c.charCodeAt(0))};
 $('bell').onclick=async()=>{
