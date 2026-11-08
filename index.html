@@ -534,7 +534,7 @@ async function loadPlans(){
   });
   h+=`<div class="row2"><input id="nl" list="nls" placeholder="List name, e.g. Places to visit"><datalist id="nls">${Object.keys(by).map(l=>`<option value="${esc(l)}">`).join('')}</datalist></div><div class="row2"><input id="nt" placeholder="Add an item or note"><button class="pbtn" id="nta">Add</button></div>`;
   h+='<h3>Scheduled messages</h3>';
-  (c.data||[]).forEach(v=>{
+  (c.data||[]).filter(v=>!v.conversation_id||v.conversation_id===curConv).forEach(v=>{
     h+=`<div class="card"><div><b>${esc(v.body)}</b><small>${new Date(v.send_at).toLocaleString('en-US',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</small></div><button class="x" data-del="scheduled:${v.id}" aria-label="Delete">${XI}</button></div>`;
   });
   h+='<div class="row2"><input id="sm" placeholder="Message to send later"></div><div class="row2"><input id="sd" type="datetime-local"><button class="pbtn" id="sma">Schedule</button></div>';
@@ -550,7 +550,7 @@ $('plans').onclick=async e=>{
     const {error}=await sb.from('notes').insert({list:l,text:t});if(error)alert('Could not save.');loadPlans()}
   else if(b.id==='sma'){const t=$('sm').value.trim(),v=$('sd').value;if(!t||!v){alert('Enter a message and a date and time.');return}
     const at=new Date(v);if(at<=new Date()){alert('Pick a time in the future.');return}
-    const {error}=await sb.from('scheduled').insert({body:t,send_at:at.toISOString()});if(error)alert('Could not schedule.');loadPlans()}
+    const {error}=await sb.from('scheduled').insert({body:t,send_at:at.toISOString(),conversation_id:curConv});if(error)alert('Could not schedule.');loadPlans()}
 };
 
 /* ---------- view once ---------- */
