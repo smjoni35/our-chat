@@ -234,6 +234,7 @@ html[data-theme=dark] .m:not(.me){border-color:var(--line)}
 #toast{position:fixed;left:50%;bottom:calc(92px + var(--safe));transform:translate(-50%,12px);max-width:min(90vw,420px);padding:11px 16px;border-radius:14px;background:var(--ink);color:var(--bg);font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:100}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 #offl{position:fixed;top:0;left:0;right:0;z-index:95;display:none;padding:calc(6px + env(safe-area-inset-top,0px)) 12px 6px;text-align:center;font-size:13px;background:#c0392b;color:#fff}#offl.on{display:block}
+.lnk{background:none;border:0;color:var(--rose);margin-top:14px;font-weight:600;cursor:pointer;padding:6px}#nm{display:none}
 </style>
 </head>
 <body>
@@ -971,6 +972,32 @@ $('exp').onclick=async()=>{
 const on=()=>localStorage.getItem('ents')!=='0',paint=()=>{$('ents').querySelector('span').textContent='Enter to send: '+(on()?'On':'Off')};
 $('txt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&on()){e.preventDefault();e.stopImmediatePropagation();sendText()}},true);
 $('ents').onclick=()=>{localStorage.setItem('ents',on()?'0':'1');paint()};paint();
+})();
+</script>
+<script>
+/* sign-up, profile auto-create, private people search */
+(()=>{
+let su=false;
+const nm=document.createElement('input');nm.id='nm';nm.className='f';nm.placeholder='Your name';nm.maxLength=40;nm.autocomplete='name';$('em').before(nm);
+const lk=document.createElement('button');lk.type='button';lk.className='lnk';lk.textContent='New here? Create an account';$('err').after(lk);
+const mode=v=>{su=v;nm.style.display=v?'block':'none';$('go').textContent=v?'Create account':'Sign in';lk.textContent=v?'Already have an account? Sign in':'New here? Create an account';$('pw').autocomplete=v?'new-password':'current-password';$('err').textContent=''};
+lk.onclick=()=>mode(!su);
+const go2=async()=>{
+  if(!su)return login();
+  const name=nm.value.trim(),email=$('em').value.trim(),pw=$('pw').value;$('err').textContent='';
+  if(name.length<2){$('err').textContent='Enter your name.';return}
+  if(!email){$('err').textContent='Enter your email.';return}
+  if(pw.length<6){$('err').textContent='Password must be at least 6 characters.';return}
+  $('go').disabled=true;const {data,error}=await sb.auth.signUp({email,password:pw,options:{data:{name}}});$('go').disabled=false;
+  if(error){$('err').textContent=/registered|exists/i.test(error.message)?'This email already has an account. Sign in instead.':error.message;return}
+  if(data.session)start(data.user);else{mode(false);$('err').textContent='Account created. Check your email to confirm, then sign in.'}
+};
+$('go').onclick=go2;$('pw').onkeydown=e=>{if(e.key==='Enter')go2()};
+const _s=start;
+start=async u=>{try{const {data}=await sb.from('profiles').select('id').eq('id',u.id).maybeSingle();if(!data)await sb.from('profiles').upsert({id:u.id,name:(u.user_metadata&&u.user_metadata.name)||(u.email||'').split('@')[0]||'Me'})}catch(_){}return _s(u)};
+const _p=paintNc;
+paintNc=()=>{if($('ncq').value.trim().length<3){$('ncl').innerHTML='<div class="empty">Type at least 3 letters of a name or @username to find someone.</div>';return}_p()};
+$('ncq').oninput=paintNc;
 })();
 </script>
 </body>
