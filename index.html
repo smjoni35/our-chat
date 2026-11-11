@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg">
 <title>Alcove</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>try{var t=localStorage.getItem("theme");if(t&&t!=="auto")document.documentElement.setAttribute("data-theme",t);var A={rose:"#b83b5e",plum:"#7a4fa3",ocean:"#2f6fb0",forest:"#2e8b6a",amber:"#c47a1e"},k=localStorage.getItem("accent");if(k&&A[k])document.documentElement.style.setProperty("--rose",A[k])}catch(e){}</script>
 <style>
@@ -194,6 +194,47 @@ html[data-theme=dark]{--bg:#1b1418;--ink:#f3e8ec;--mute:#a48f98;--card:#271c22;-
 #inc button{border:0;border-radius:20px;padding:8px 14px;font-weight:600;cursor:pointer;color:#fff}#iok{background:#2e7d32}#ino{background:#e53935}
 @media (min-width:900px){#nc{align-items:center}#ncc{border-radius:18px}}
 </style>
+<style id="premium">
+:root{--bg:#f6f0eb;--ink:#2b1f26;--mute:#86767e;--card:#fffcfa;--line:#e9ddd8;--them:#fffcfa;--serif:'Fraunces','Hind Siliguri',Georgia,serif;--safe:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#150f14;--ink:#f4eaee;--mute:#a7939c;--card:#1f161d;--line:#33262e;--them:#2a1e26}}
+html[data-theme=light]{--bg:#f6f0eb;--ink:#2b1f26;--mute:#86767e;--card:#fffcfa;--line:#e9ddd8;--them:#fffcfa}
+html[data-theme=dark]{--bg:#150f14;--ink:#f4eaee;--mute:#a7939c;--card:#1f161d;--line:#33262e;--them:#2a1e26}
+body{font-family:'Plus Jakarta Sans','Hind Siliguri',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.center h1,#splash b,#inbox .ttl b{font-family:var(--serif);font-style:italic;font-weight:600;letter-spacing:-.01em}
+.center h1{font-size:42px;margin-bottom:6px}#splash b{font-size:36px;letter-spacing:0}#inbox .ttl b{font-size:26px}
+#splash .logo{animation:pop .6s cubic-bezier(.2,.8,.2,1)}
+.f{padding:15px 16px;border-radius:14px}.f:focus{outline:0;border-color:var(--rose);box-shadow:0 0 0 4px color-mix(in srgb,var(--rose) 18%,transparent)}
+.btn{padding:15px;border-radius:14px;box-shadow:0 10px 24px -10px color-mix(in srgb,var(--rose) 70%,transparent)}
+header{background:color-mix(in srgb,var(--card) 84%,transparent);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);position:relative;z-index:4}
+.tabs{margin:2px 14px 10px;padding:3px;gap:2px;background:var(--bg);border-radius:14px}
+.tabs button,.tabs button.on{border:0;border-radius:11px;padding:8px;font-size:14px}
+.tabs button.on{background:var(--card);color:var(--rose);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.m{border-radius:20px;padding:9px 14px;font-size:15.5px;line-height:1.5;border-color:transparent;box-shadow:0 1px 1px rgba(43,31,38,.05),0 8px 18px -12px rgba(43,31,38,.35)}
+html[data-theme=dark] .m:not(.me){border-color:var(--line)}
+@media (prefers-color-scheme:dark){html:not([data-theme=light]) .m:not(.me){border-color:var(--line)}}
+.m.me{background:linear-gradient(160deg,color-mix(in srgb,var(--rose) 92%,#fff),color-mix(in srgb,var(--rose) 78%,#000));border-color:transparent}
+.m.jb{box-shadow:none}.t{font-size:10.5px;opacity:.65}
+.day{background:color-mix(in srgb,var(--mute) 13%,transparent);border:0;padding:3px 12px;border-radius:12px}
+#bar{background:transparent;border:0;padding:4px 10px calc(10px + var(--safe))}
+.row{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:5px;gap:2px;box-shadow:0 10px 26px -14px rgba(43,31,38,.4)}
+.ic.alt{background:none;border:0;width:38px;height:38px;color:var(--mute)}.ic.alt:hover{color:var(--rose);filter:none}
+#txt{background:none;border:0;padding:9px 6px;min-height:40px;border-radius:0}#txt:focus{border:0;box-shadow:none}
+#send{width:40px;height:40px;box-shadow:0 6px 14px -6px color-mix(in srgb,var(--rose) 80%,transparent)}
+.row:has(#txt:placeholder-shown) #send{display:none}.row:has(#txt:not(:placeholder-shown)) #mic{display:none}
+@media (pointer:coarse){#emj,#ep{display:none!important}}
+.ir{padding:12px 16px;gap:14px}.ir.act{background:color-mix(in srgb,var(--rose) 9%,transparent)}.ir:hover{background:color-mix(in srgb,var(--rose) 6%,transparent)}
+.av{box-shadow:0 4px 12px -6px color-mix(in srgb,var(--rose) 70%,transparent)}
+#shc,#stc,#psc{border-radius:26px 26px 0 0;padding:10px 16px calc(16px + var(--safe))}
+#shc::before,#stc::before,#psc::before{content:"";display:block;width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 12px}
+@media (min-width:900px){#shc::before,#stc::before,#psc::before{display:none}#shc,#stc,#psc{border-radius:22px}}
+.stt,#plans h3{text-transform:none;letter-spacing:0;font-size:15px;color:var(--ink);font-weight:600}
+#acts button,#stl button,#pl button{padding:14px 6px}
+.card{border-radius:18px;box-shadow:0 8px 20px -16px rgba(43,31,38,.5)}
+.cnt{font-family:var(--serif);font-size:28px;font-weight:600;font-style:italic}.cnt small{font-family:'Plus Jakarta Sans','Hind Siliguri',sans-serif;font-style:normal}
+#toast{position:fixed;left:50%;bottom:calc(92px + var(--safe));transform:translate(-50%,12px);max-width:min(90vw,420px);padding:11px 16px;border-radius:14px;background:var(--ink);color:var(--bg);font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:100}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#offl{position:fixed;top:0;left:0;right:0;z-index:95;display:none;padding:calc(6px + env(safe-area-inset-top,0px)) 12px 6px;text-align:center;font-size:13px;background:#c0392b;color:#fff}#offl.on{display:block}
+</style>
 </head>
 <body>
 <div id="splash"><img class="logo" src="icon.svg" alt=""><b>Alcove</b></div>
@@ -256,7 +297,7 @@ html[data-theme=dark]{--bg:#1b1418;--ink:#f3e8ec;--mute:#a48f98;--card:#271c22;-
   </div>
 </section>
 
-<div id="st" class="ov"><div id="stc"><div class="stt">Settings</div><div id="stl"><button id="prof"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg> Edit profile</button><button id="pinc"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17v5"/><path d="M5 17h14v-1.8a2 2 0 0 0-1.1-1.8L16 12.5V4h1V2H7v2h1v8.5l-1.9.9A2 2 0 0 0 5 15.2z"/></svg> <span>Pin chat to top</span></button><button id="bell"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifications</button><button id="setpin"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> App lock (PIN)</button><button id="alk" data-keep="1"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> <span>Auto-lock: 30 seconds</span></button><button id="thm" data-keep="1"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg> <span>Theme: Auto</span></button><div class="swr"><span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16" cy="10" r="1"/></svg> Accent colour</span><div class="sw" id="acc"></div></div><button id="snd" data-keep="1"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg> <span>Sound: On</span></button><button id="exp"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg> Export chat (JSON)</button><button id="out" class="dl"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg> Sign out</button></div></div></div>
+<div id="st" class="ov"><div id="stc"><div class="stt">Settings</div><div id="stl"><button id="prof"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg> Edit profile</button><button id="pinc"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17v5"/><path d="M5 17h14v-1.8a2 2 0 0 0-1.1-1.8L16 12.5V4h1V2H7v2h1v8.5l-1.9.9A2 2 0 0 0 5 15.2z"/></svg> <span>Pin chat to top</span></button><button id="bell"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifications</button><button id="setpin"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> App lock (PIN)</button><button id="alk" data-keep="1"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> <span>Auto-lock: 30 seconds</span></button><button id="thm" data-keep="1"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg> <span>Theme: Auto</span></button><div class="swr"><span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16" cy="10" r="1"/></svg> Accent colour</span><div class="sw" id="acc"></div></div><button id="snd" data-keep="1"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg> <span>Sound: On</span></button><button id="exp"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg> Save chat as text</button><button id="out" class="dl"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg> Sign out</button></div></div></div>
 <div id="ps" class="ov"><div id="psc"><div class="stt">Send photo</div><div id="pl"><button data-m="n">Send photo</button><button data-m="o">Send as view once</button></div></div></div>
 <div id="lb" class="ov"><img id="lbi" alt=""><div><a id="lbd" download="photo.jpg">Save</a><button id="lbx">Close</button></div></div>
 <div id="sh" class="ov"><div id="shc"><div id="emo"></div><div id="acts"></div></div></div>
@@ -427,7 +468,7 @@ $('sh').onclick=async e=>{
   else if(b.dataset.a==='cp')navigator.clipboard&&navigator.clipboard.writeText(target.body);
   else if(b.dataset.a==='del'&&confirm('This message will be deleted for everyone. Delete it?')){
     const {error}=await sb.from('messages').delete().eq('id',target.id);
-    if(error)alert('Could not delete the message.');else{const fs=[target.image_path,target.audio_path].filter(Boolean);if(fs.length)sb.storage.from('photos').remove(fs)}
+    if(error)alert('Could not delete the message.');else{const fs=[target.image_path,target.audio_path,target.file_path].filter(Boolean);if(fs.length)sb.storage.from('photos').remove(fs)}
   }
 };
 const clearRep=()=>{reply=null;if(editing){editing=null;$('txt').value='';$('txt').style.height='auto'}$('rep').style.display='none'};
@@ -888,6 +929,41 @@ $('bell').onclick=async()=>{
   }catch(e){console.error(e);alert('Could not turn on notifications.\n\nReason: '+((e&&(e.name?e.name+': ':'')+(e.message||e.details||''))||e))}
 };
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+<script>
+/* ---------- polish: toasts, offline banner, PIN, export ---------- */
+(()=>{
+const T=document.createElement('div');T.id='toast';T.setAttribute('role','status');document.body.appendChild(T);let tt=0;
+window.alert=m=>{T.textContent=String(m).replace(/\n+/g,' ');T.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>T.classList.remove('on'),3200)};
+const O=document.createElement('div');O.id='offl';O.textContent="You're offline. Messages can't be sent right now.";document.body.appendChild(O);
+const net=()=>O.classList.toggle('on',!navigator.onLine);addEventListener('online',()=>{net();if(me)load()});addEventListener('offline',net);net();
+document.addEventListener('error',async e=>{const i=e.target;if(!i||i.tagName!=='IMG'||!i.dataset.p||i.dataset.rt)return;i.dataset.rt='1';urls.delete(i.dataset.p);const u=await sign(i.dataset.p);if(u)i.src=u},true);
+const b64=a=>btoa(String.fromCharCode(...a)),ub=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
+async function kdf(p,salt){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(p),'PBKDF2',false,['deriveBits']);return b64(new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',salt,iterations:150000,hash:'SHA-256'},k,256)))}
+async function setPinHash(p){const s=crypto.getRandomValues(new Uint8Array(16));localStorage.setItem('pins',b64(s));localStorage.setItem('pinh',await kdf(p,s))}
+$('pin').oninput=async e=>{
+  const v=e.target.value;if(v.length<4)return;
+  const w=+localStorage.getItem('pinu')||0;if(Date.now()<w){e.target.value='';$('perr').textContent='Too many tries. Wait '+Math.ceil((w-Date.now())/1000)+'s.';return}
+  const h=localStorage.getItem('pinh'),s=localStorage.getItem('pins');
+  if((s?await kdf(v,ub(s)):await sha(v))===h){localStorage.removeItem('pinf');localStorage.removeItem('pinu');if(!s)await setPinHash(v);openApp();return}
+  const f=(+localStorage.getItem('pinf')||0)+1;localStorage.setItem('pinf',f);e.target.value='';
+  if(f%5===0){localStorage.setItem('pinu',Date.now()+Math.min(30*2**(f/5-1),900)*1000);$('perr').textContent='Too many tries. Try again in a moment.'}else $('perr').textContent='Incorrect PIN';
+};
+$('setpin').onclick=async()=>{
+  const p=prompt('Enter a new 4-digit PIN. Leave it empty to turn the PIN off.');if(p===null)return;
+  if(p===''){['pinh','pins','pinf','pinu'].forEach(k=>localStorage.removeItem(k));alert('PIN turned off');return}
+  if(!/^\d{4}$/.test(p)){alert('Enter exactly 4 digits');return}
+  if(prompt('Enter the PIN again to confirm')!==p){alert("PINs didn't match. Nothing changed.");return}
+  await setPinHash(p);alert('PIN turned on');
+};
+$('exp').onclick=async()=>{
+  if(!curConv){alert('Open a chat first.');return}
+  const rows=[];for(let f=0;;f+=1000){const {data,error}=await sb.from('messages').select('*').eq('conversation_id',curConv).order('created_at').range(f,f+999);if(error){alert('Could not export the chat.');return}rows.push(...data);if(data.length<1000)break}
+  const nm=id=>id===me?'You':((profiles.get(id)||{}).name||'Them');
+  const txt=rows.map(m=>'['+new Date(m.created_at).toLocaleString('en-GB')+'] '+nm(m.sender_id)+': '+(m.body||(m.image_path?'[Photo]':m.audio_path?'[Voice message]':m.file_path?'[File: '+(m.file_name||'')+']':''))).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'}));a.download='chat-'+new Date().toISOString().slice(0,10)+'.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+};
+})();
 </script>
 </body>
 </html>
