@@ -268,6 +268,15 @@ html[data-theme=dark] .m:not(.me){border-color:var(--line)}
 #inc>div:not(#ibar):not(#iav){position:relative;z-index:1}
 #iav{flex:none}
 #blkbar{display:none;padding:8px 16px;font-size:13px;text-align:center;color:#d64545;background:color-mix(in srgb,#d64545 8%,transparent)}
+#fw,#gm{align-items:flex-end;justify-content:center;background:rgba(0,0,0,.45)}
+#fwc,#gmc{width:100%;max-height:82vh;overflow:auto;background:var(--card);border-radius:26px 26px 0 0;padding:10px 16px calc(16px + var(--safe))}
+@media (min-width:900px){#fw,#gm{align-items:center}#fwc,#gmc{max-width:420px;border-radius:22px}}
+.gmr{display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--line)}.gmr .im{flex:1;min-width:0}.gmr small{color:var(--mute);display:block}
+.gmb{width:100%;background:none;border:0;border-top:1px solid var(--line);color:var(--ink);text-align:left;font-size:16px;cursor:pointer}
+.gmi{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font-size:15px;margin:8px 0}
+.lnk2{background:none;border:0;color:var(--rose);font-weight:600;padding:8px;cursor:pointer;font-size:15px}.lnk2.red{color:#d64545}
+.newdiv{margin:8px auto;width:max-content;padding:3px 12px;border-radius:12px;font-size:12px;font-weight:600;color:var(--rose);background:color-mix(in srgb,var(--rose) 12%,transparent)}
+#cap{margin:8px 0;min-height:0}
 </style>
 </head>
 <body>
@@ -1051,7 +1060,7 @@ renderInbox=()=>{
       const ms=[...cache.values()].filter(m=>m.conversation_id===c.id),last=ms[ms.length-1];
       const r=document.createElement('div');r.className='rq';
       const av=document.createElement('div');av.className='av';paintAv(av,c.name,c.avatar);
-      const im=document.createElement('div');im.className='im';const n=document.createElement('b');n.textContent=c.name;const sp=document.createElement('span');sp.textContent=last?snip(last):'Wants to chat';im.append(n,sp);
+      const im=document.createElement('div');im.className='im';const n=document.createElement('b');n.textContent=c.name;const sp=document.createElement('span');sp.textContent=last?snip(last):(c.is_group?'Invited you to this group':'Wants to chat');im.append(n,sp);
       const ok=document.createElement('button');ok.className='pbtn';ok.textContent='Accept';
       ok.onclick=async()=>{ok.disabled=true;const {error}=await sb.rpc('accept_chat',{p_cid:String(c.id)});if(error){console.error(error);alert('Could not accept the request.');ok.disabled=false;return}await load();openConv(c.id)};
       const no=document.createElement('button');no.className='x';no.setAttribute('aria-label','Delete request');no.innerHTML=XI;
@@ -1183,6 +1192,98 @@ const _st3=sendText;sendText=async()=>{const pr=peerOf();if(pr&&blocked.has(pr))
 const _sc=startCall;startCall=async v=>{const pr=peerOf();if(pr&&blocked.has(pr)){alert('Unblock them to call.');return}return _sc(v)};
 const _oi3=onInvite;onInvite=p=>{if(p&&blocked.has(p.from))return;_oi3(p)};
 const _s3=start;start=async u=>{await _s3(u);loadBlocks()};
+})();
+</script>
+<div id="fw" class="ov"><div id="fwc"></div></div><div id="gm" class="ov"><div id="gmc"></div></div>
+<script>
+/* groups, forward, mute, new-messages marker, optional CAPTCHA and TURN */
+(()=>{
+/* ====== CONFIG: fill these in when you have the keys ====== */
+const CONFIG={
+  turnstileSiteKey:'',            /* Cloudflare Turnstile SITE key (also enable CAPTCHA in Supabase) */
+  turn:null                       /* e.g. {urls:['turn:your.host:3478'],username:'...',credential:'...'} */
+};
+if(CONFIG.turn)ICE.iceServers.push(CONFIG.turn);
+if(CONFIG.turnstileSiteKey){
+  const cap=document.createElement('div');cap.id='cap';$('go').before(cap);let wid=null;
+  const sc=document.createElement('script');sc.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';sc.async=true;
+  sc.onload=()=>{wid=turnstile.render('#cap',{sitekey:CONFIG.turnstileSiteKey,theme:'auto'})};document.head.appendChild(sc);
+  const wrap=k=>{const f=sb.auth[k].bind(sb.auth);sb.auth[k]=async a=>{const t=wid!==null&&window.turnstile?turnstile.getResponse(wid):'';
+    if(!t)return{data:{user:null,session:null},error:{message:'Please complete the security check.'}};
+    const r=await f({...a,options:{...(a.options||{}),captchaToken:t}});try{turnstile.reset(wid)}catch(_){}return r}};
+  wrap('signInWithPassword');wrap('signUp');
+}
+const h=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const ico=d=>'<svg class="i" viewBox="0 0 24 24" aria-hidden="true">'+d+'</svg> ';
+const mk=(id,d,t)=>{const b=document.createElement('button');b.id=id;b.innerHTML=ico(d)+'<span>'+t+'</span>';return b};
+[$('fw'),$('gm')].forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on')}));
+
+/* ---- group invitations: mark groups I was invited to as requests ---- */
+async function markInv(){const {data,error}=await sb.from('conversation_members').select('conversation_id').eq('user_id',me).eq('accepted',false);
+  if(error||!data||!data.length)return;let ch=false;
+  data.forEach(r=>{const c=convs.get(r.conversation_id);if(c&&c.is_group){c.accepted=false;c.requested_by='invite';ch=true}});if(ch)renderInbox()}
+const _ld=load;load=async()=>{await _ld();await markInv()};
+
+/* ---- menu entries: group info + mute ---- */
+const gib=mk('gib','<circle cx="9" cy="8" r="3.5"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M17 11a3 3 0 1 0 0-6"/><path d="M19 21a6 6 0 0 0-3-5.2"/>','Group info');
+const mutb=mk('mutb','<path d="M11 5L6 9H2v6h4l5 4z"/><path d="M23 9l-6 6"/><path d="M17 9l6 6"/>','Mute chat sound');
+$('pinc').after(gib,mutb);
+const mset=new Set(JSON.parse(localStorage.getItem('muteC')||'[]'));
+function paintMenu(){const c=convs.get(curConv);gib.style.display=c&&c.is_group?'':'none';mutb.querySelector('span').textContent=mset.has(String(curConv))?'Unmute chat sound':'Mute chat sound'}
+$('menu').addEventListener('click',paintMenu);$('menu2').addEventListener('click',paintMenu);
+mutb.onclick=()=>{const k=String(curConv);mset.has(k)?mset.delete(k):mset.add(k);localStorage.setItem('muteC',JSON.stringify([...mset]));alert(mset.has(k)?'Sound muted for this chat':'Sound on for this chat');$('st').classList.remove('on')};
+let lastIn=null;
+const _r4=render;render=(m,a)=>{lastIn=m.conversation_id;_r4(m,a)};
+const _bp=beep;beep=()=>{if(lastIn!=null&&mset.has(String(lastIn)))return;_bp()};
+const _oi4=onInvite;onInvite=p=>{lastIn=null;_oi4(p)};
+
+/* ---- group info sheet ---- */
+gib.onclick=()=>{$('st').classList.remove('on');openGm()};
+async function openGm(){
+  const c=convs.get(curConv);if(!c||!c.is_group)return;const cid=String(curConv),box=$('gmc');
+  const {data:mem}=await sb.from('conversation_members').select('user_id,accepted').eq('conversation_id',curConv);
+  const rows=mem||(c.ids||[]).map(user_id=>({user_id,accepted:true}));
+  box.textContent='';box.append(h('div','stt','Group info'));
+  const nm=h('input','gmi');nm.value=c.name;nm.maxLength=60;const sv=h('button','lnk2','Save name');
+  sv.onclick=async()=>{const t=nm.value.trim();if(!t||t===c.name)return;const {error}=await sb.rpc('rename_group',{p_cid:cid,p_title:t});if(error){console.error(error);alert('Could not rename the group.');return}alert('Group renamed');await load();openGm()};
+  box.append(nm,sv,h('div','stt','Members ('+rows.length+')'));
+  const mine=c.created_by===me;
+  rows.forEach(r=>{const p=profiles.get(r.user_id)||{},row=h('div','gmr'),av=h('div','av'),im=h('div','im');paintAv(av,p.name,p.avatar_path);
+    im.append(h('b',null,r.user_id===me?'You':(p.name||'Member')),h('small',null,[c.created_by===r.user_id?'Admin':'',r.accepted===false?'Invited':''].filter(Boolean).join(' \u00b7 ')));row.append(av,im);
+    if(mine&&r.user_id!==me){const rm=h('button','lnk2 red','Remove');rm.onclick=async()=>{if(!confirm('Remove '+(p.name||'this person')+' from the group?'))return;const {error}=await sb.rpc('remove_group_member',{p_cid:cid,p_uid:r.user_id});if(error){console.error(error);alert('Could not remove this person.');return}await load();openGm()};row.append(rm)}
+    box.append(row)});
+  box.append(h('div','stt','Add people'));
+  const q=h('input','gmi');q.placeholder='Search by name (3+ letters)';const res=h('div');
+  q.oninput=()=>{res.textContent='';const v=q.value.trim().toLowerCase();if(v.length<3)return;
+    [...profiles.values()].filter(p=>p.id!==me&&!rows.some(r=>r.user_id===p.id)&&((p.name||'').toLowerCase().includes(v)||(p.username||'').toLowerCase().includes(v))).slice(0,8).forEach(p=>{
+      const row=h('div','gmr'),av=h('div','av'),im=h('div','im');paintAv(av,p.name,p.avatar_path);im.append(h('b',null,p.name||'?'),h('small',null,p.username?'@'+p.username:''));
+      const ad=h('button','lnk2','Add');ad.onclick=async()=>{ad.disabled=true;const {error}=await sb.rpc('add_group_member',{p_cid:cid,p_uid:p.id});if(error){console.error(error);alert('Could not add this person.');ad.disabled=false;return}alert('Invitation sent to '+p.name);await load();openGm()};
+      row.append(av,im,ad);res.append(row)})};
+  const lv=h('button','lnk2 red','Leave group');
+  lv.onclick=async()=>{if(!confirm('Leave this group?'))return;const {error}=await sb.rpc('leave_group',{p_cid:cid});if(error){console.error(error);alert('Could not leave the group.');return}$('gm').classList.remove('on');curConv=null;await load();goInbox()};
+  box.append(q,res,lv);$('gm').classList.add('on');
+}
+
+/* ---- forward (text messages) ---- */
+function openFw(text){const box=$('fwc');box.textContent='';box.append(h('div','stt','Forward to'));
+  [...convs.values()].filter(c=>!(c.accepted===false&&c.requested_by&&c.requested_by!==me)).forEach(c=>{
+    const b=h('button','gmr gmb'),av=h('div','av'),im=h('div','im');paintAv(av,c.name,c.avatar);im.append(h('b',null,c.name));b.append(av,im);
+    b.onclick=async()=>{$('fw').classList.remove('on');const {error}=await sb.from('messages').insert({body:text,conversation_id:c.id});alert(error?'Could not forward.':'Forwarded to '+c.name)};box.append(b)});
+  $('fw').classList.add('on')}
+const acts=$('acts');
+new MutationObserver(()=>{if(!acts.querySelector('[data-a]')||acts.querySelector('[data-a=fwd]')||!(target&&target.body))return;
+  const b=document.createElement('button');b.dataset.a='fwd';b.innerHTML=ico('<path d="M15 14l5-5-5-5"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/>')+'Forward';acts.appendChild(b)}).observe(acts,{childList:true});
+acts.addEventListener('click',e=>{if(!e.target.closest('[data-a=fwd]'))return;e.stopPropagation();const t=target&&target.body;$('sh').classList.remove('on');if(t)openFw(t)},true);
+
+/* ---- "New messages" marker ---- */
+const seen=JSON.parse(localStorage.getItem('seenAt')||'{}');
+const stamp=id=>{if(id){seen[id]=new Date().toISOString();localStorage.setItem('seenAt',JSON.stringify(seen))}};
+function divider(t){document.querySelectorAll('.newdiv').forEach(x=>x.remove());if(!t)return;
+  const first=[...$('msgs').querySelectorAll('.m[data-id]')].find(el=>{const m=cache.get(+el.dataset.id);return m&&m.sender_id!==me&&new Date(m.created_at)>new Date(t)});
+  if(!first)return;const d=h('div','newdiv','New messages');first.before(d);d.scrollIntoView({block:'center'})}
+const _oc4=openConv;openConv=id=>{const prev=curConv,t=seen[id];if(prev&&prev!==id)stamp(prev);_oc4(id);setTimeout(()=>{if(curConv===id){divider(t);stamp(id)}},150)};
+const _gi=goInbox;goInbox=()=>{stamp(curConv);_gi()};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stamp(curConv)});
 })();
 </script>
 </body>
