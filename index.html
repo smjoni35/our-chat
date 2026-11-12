@@ -238,6 +238,29 @@ html[data-theme=dark] .m:not(.me){border-color:var(--line)}
 #reqs{border-bottom:1px solid var(--line);padding-bottom:6px;margin-bottom:4px}.rqh{padding:12px 16px 4px;font-weight:600;font-size:15px}
 .rq{display:flex;align-items:center;gap:12px;padding:8px 16px}.rq .pbtn{padding:8px 14px;font-size:14px;cursor:pointer}
 #reqb{display:none;padding:8px 16px;font-size:13px;color:var(--mute);text-align:center;background:color-mix(in srgb,var(--rose) 8%,transparent)}
+/* call screens */
+#call,#inc{background:#120d12;color:#fff}
+#rv{position:absolute;inset:0;background:#120d12}
+#lv{top:calc(16px + env(safe-area-inset-top,0px));right:16px;width:104px;height:144px;border-radius:16px;border:0;box-shadow:0 10px 28px rgba(0,0,0,.5);z-index:2}
+#cpeer{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 24px}
+.cav{--s:132px;box-shadow:0 0 0 0 color-mix(in srgb,var(--rose) 50%,transparent);animation:cring 1.8s ease-out infinite}
+@keyframes cring{to{box-shadow:0 0 0 40px transparent}}
+#call.live .cav{animation:none}
+@media (prefers-reduced-motion:reduce){.cav{animation:none}}
+#cnm,#incn{display:block;font-size:28px;font-weight:600;margin-top:22px;color:#fff}
+#cst,#inct{position:static;display:block;margin-top:6px;font-size:16px;color:rgba(255,255,255,.7);text-shadow:none;font-variant-numeric:tabular-nums}
+#inc br{display:none}
+#call.vl #cpeer{position:absolute;top:calc(18px + env(safe-area-inset-top,0px));left:0;right:0;align-items:flex-start;text-align:left;padding:0 130px 0 20px;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+#call.vl .cav{display:none}#call.vl #cnm{margin-top:0;font-size:20px}#call.vl #cst{color:#fff}
+#cbar,#ibar{position:absolute;left:0;right:0;bottom:calc(40px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:28px;z-index:3}
+#ibar{gap:72px}
+#cbar button,#ibar button{width:auto;height:auto;background:none;border-radius:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:8px;color:#fff;font-size:13px;font-weight:500}
+#cbar button i,#ibar button i{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:background .15s,color .15s}
+#cbar button.off i{background:#fff;color:#120d12}
+#cbar #cend i,#ibar #ino i{background:#e5484d}#ibar #iok i{background:#30a46c}
+#cbar #cend,#ibar #ino,#ibar #iok{background:none}
+.ci{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ci .sl{display:none}.off .ci .sl{display:inline}.rot{transform:rotate(135deg)}
 </style>
 </head>
 <body>
@@ -1040,6 +1063,39 @@ $('send').onclick=sendText;
 let rch=null;const _s2=start;
 start=async u=>{await _s2(u);if(rch)sb.removeChannel(rch);
   rch=sb.channel('rq-'+u.id).on('postgres_changes',{event:'UPDATE',schema:'public',table:'conversations'},()=>load()).on('postgres_changes',{event:'DELETE',schema:'public',table:'conversations'},()=>load()).subscribe()};
+})();
+</script>
+<script>
+/* call screen: avatar, name, timer, labelled buttons, full-screen incoming, wake lock */
+(()=>{
+const ic=(d,x)=>'<i><svg class="ci'+(x||'')+'" viewBox="0 0 24 24" aria-hidden="true">'+d+'</svg></i>';
+const PH='<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>';
+const MIC='<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/><path class="sl" d="M3 3l18 18"/>';
+const CAM='<path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/><path class="sl" d="M3 3l18 18"/>';
+$('cmute').innerHTML=ic(MIC)+'<span>Mute</span>';$('ccam').innerHTML=ic(CAM)+'<span>Camera</span>';$('cend').innerHTML=ic(PH,' rot')+'<span>End</span>';
+$('iok').innerHTML=ic(PH)+'<span>Accept</span>';$('ino').innerHTML=ic(PH,' rot')+'<span>Decline</span>';
+const cp=document.createElement('div');cp.id='cpeer';cp.innerHTML='<div class="av cav" id="cav"></div><b id="cnm"></b>';cp.appendChild($('cst'));$('call').insertBefore(cp,$('cbar'));
+const ib=document.createElement('div');ib.id='ibar';ib.append($('ino'),$('iok'));
+const iav=document.createElement('div');iav.id='iav';iav.className='av cav';$('inc').prepend(iav);
+const tx=document.createElement('div');tx.append($('incn'),$('inct'));$('inc').insertBefore(tx,iav.nextSibling);$('inc').appendChild(ib);
+const tog=(id,kind)=>()=>{if(!lstream)return;const t=kind==='a'?lstream.getAudioTracks():lstream.getVideoTracks();t.forEach(x=>x.enabled=!x.enabled);$(id).classList.toggle('off',!(t[0]&&t[0].enabled));$(id).querySelector('span').textContent=id==='cmute'?(t[0]&&t[0].enabled?'Mute':'Muted'):(t[0]&&t[0].enabled?'Camera':'Camera off')};
+$('cmute').onclick=tog('cmute','a');$('ccam').onclick=tog('ccam','v');
+let t0=0,tmr=0,wl=null;const mm=n=>String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');
+const tick=()=>{$('cst').textContent=mm(Math.round((Date.now()-t0)/1000))};
+const _cu=callUi;
+callUi=(on,t)=>{const c=$('call');
+  if(on){
+    if(!c.classList.contains('on')){const pr=(cstate&&profiles.get(cstate.peer))||{};paintAv($('cav'),pr.name||'?',pr.avatar_path);$('cnm').textContent=pr.name||'Call';
+      ['cmute','ccam'].forEach(k=>{$(k).classList.remove('off')});$('cmute').querySelector('span').textContent='Mute';$('ccam').querySelector('span').textContent='Camera';
+      if(!wl&&navigator.wakeLock)navigator.wakeLock.request('screen').then(l=>{wl=l}).catch(()=>{})}
+    if(t==='Connected'){_cu(true);if(!t0){t0=Date.now();tmr=setInterval(tick,1000)}c.classList.add('live');c.classList.toggle('vl',!!(cstate&&cstate.video));tick()}
+    else _cu(true,t&&t.replace(/^Calling .*/,'Calling\u2026'));
+  }else{
+    clearInterval(tmr);tmr=0;if(t0){alert('Call ended \u00b7 '+mm(Math.round((Date.now()-t0)/1000)));t0=0}
+    c.classList.remove('live','vl');_cu(false);if(wl){wl.release().catch(()=>{});wl=null}
+  }};
+const _oi=onInvite;
+onInvite=p=>{_oi(p);if(!inv)return;const pr=profiles.get(p.from)||{};paintAv($('iav'),pr.name||p.name,pr.avatar_path);if(navigator.vibrate)navigator.vibrate([300,150,300])};
 })();
 </script>
 </body>
