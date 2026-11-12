@@ -1133,5 +1133,22 @@ render=(m,a)=>{
 };
 })();
 </script>
+<script>
+/* images sent through the paperclip: send as photos, and preview old ones */
+(()=>{
+const okT=/^image\/(jpeg|png|webp|gif|avif)$/i,okN=/\.(jpe?g|png|webp|gif|avif)$/i;
+$('fil').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+  if(okT.test(f.type)||(!f.type&&okN.test(f.name))){pendingFile=f;$('ps').classList.add('on')}else sendFile(f)};
+const _r2=render;
+render=(m,a)=>{
+  _r2(m,a);
+  if(!m.file_path||!(okT.test(m.file_type||'')||okN.test(m.file_name||'')))return;
+  const el=document.querySelector('.m[data-id="'+m.id+'"]'),fc=el&&el.querySelector('.fcard');if(!fc)return;
+  const i=document.createElement('img');i.alt=m.file_name||'Photo';i.dataset.p=m.file_path;
+  sign(m.file_path).then(u=>{if(u){i.src=u;i.onload=()=>{i.classList.add('ld');if(typeof stick!=='undefined'&&stick)down()};i.onclick=()=>openLb(u)}});
+  fc.replaceWith(i);
+};
+})();
+</script>
 </body>
 </html>
