@@ -1201,9 +1201,12 @@ const _s3=start;start=async u=>{await _s3(u);loadBlocks()};
 /* ====== CONFIG: fill these in when you have the keys ====== */
 const CONFIG={
   turnstileSiteKey:'0x4AAAAAAF99ySq9mza_hzgZ',            /* Cloudflare Turnstile SITE key (also enable CAPTCHA in Supabase) */
-  turn:null                       /* e.g. {urls:['turn:your.host:3478'],username:'...',credential:'...'} */
+  turn:null,                      /* or paste a full ICE servers array here instead */
+  turnUser:'56af280a536ea37ac549c4cd',  /* Metered TURN username */
+  turnPass:'7R0aN2tkZSFKCzkR'                     /* Metered TURN password: paste it between the quotes */
 };
-if(CONFIG.turn)ICE.iceServers.push(CONFIG.turn);
+if(CONFIG.turn)ICE.iceServers.push(...[].concat(CONFIG.turn));
+if(CONFIG.turnPass)ICE.iceServers.push({urls:'stun:stun.relay.metered.ca:80'},...['turn:asia-east.relay.metered.ca:80','turn:asia-east.relay.metered.ca:80?transport=tcp','turn:asia-east.relay.metered.ca:443','turns:asia-east.relay.metered.ca:443?transport=tcp'].map(u=>({urls:u,username:CONFIG.turnUser,credential:CONFIG.turnPass})));
 if(CONFIG.turnstileSiteKey){
   const cap=document.createElement('div');cap.id='cap';$('go').before(cap);let wid=null;
   const sc=document.createElement('script');sc.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';sc.async=true;
