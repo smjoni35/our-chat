@@ -267,6 +267,7 @@ html[data-theme=dark] .m:not(.me){border-color:var(--line)}
 #inc{position:fixed;inset:0;top:0;left:0;width:auto;transform:none;border-radius:0;box-shadow:none;padding:env(safe-area-inset-top,0px) 24px 0;gap:0;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
 #inc>div:not(#ibar):not(#iav){position:relative;z-index:1}
 #iav{flex:none}
+#blkbar{display:none;padding:8px 16px;font-size:13px;text-align:center;color:#d64545;background:color-mix(in srgb,#d64545 8%,transparent)}
 </style>
 </head>
 <body>
@@ -1148,6 +1149,40 @@ render=(m,a)=>{
   sign(m.file_path).then(u=>{if(u){i.src=u;i.onload=()=>{i.classList.add('ld');if(typeof stick!=='undefined'&&stick)down()};i.onclick=()=>openLb(u)}});
   fc.replaceWith(i);
 };
+})();
+</script>
+<script>
+/* block & report */
+(()=>{
+const blocked=new Set();
+const mk=(id,d,t)=>{const b=document.createElement('button');b.id=id;b.innerHTML='<svg class="i" viewBox="0 0 24 24" aria-hidden="true">'+d+'</svg> <span>'+t+'</span>';return b};
+$('pinc').after(mk('rptb','<path d="M4 22V4h12l-1 4 1 4H4"/>','Report'),mk('blkb','<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>','Block'));
+const bar=document.createElement('div');bar.id='blkbar';$('msgs').before(bar);
+const peerOf=()=>{const c=convs.get(curConv);return c&&!c.is_group?(c.ids||[]).find(i=>i!==me):null};
+function paintBlk(){const c=convs.get(curConv),pr=peerOf(),on=!!pr;
+  $('blkb').style.display=$('rptb').style.display=on?'':'none';
+  if(on){$('blkb').querySelector('span').textContent=(blocked.has(pr)?'Unblock ':'Block ')+c.name;$('rptb').querySelector('span').textContent='Report '+c.name}
+  const bl=on&&blocked.has(pr);bar.style.display=bl?'block':'none';if(bl)bar.textContent='You blocked '+c.name+'. Unblock them from the menu to chat again.'}
+$('menu').addEventListener('click',paintBlk);$('menu2').addEventListener('click',paintBlk);
+async function loadBlocks(){const {data,error}=await sb.from('blocks').select('blocked');if(error)return;blocked.clear();data.forEach(r=>blocked.add(r.blocked));paintBlk()}
+async function block(pr){const {error}=await sb.from('blocks').insert({blocked:pr});if(error){console.error(error);alert('Could not block right now.');return false}blocked.add(pr);return true}
+$('blkb').onclick=async()=>{const pr=peerOf();if(!pr)return;const nm=convs.get(curConv).name;
+  if(blocked.has(pr)){const {error}=await sb.from('blocks').delete().eq('blocked',pr);if(error){console.error(error);alert('Could not unblock right now.');return}blocked.delete(pr);alert(nm+' unblocked');}
+  else{if(!confirm('Block '+nm+'? They will not be able to message or call you.'))return;if(!await block(pr))return;alert(nm+' blocked')}
+  $('st').classList.remove('on');paintBlk()};
+$('rptb').onclick=async()=>{const pr=peerOf();if(!pr)return;const nm=convs.get(curConv).name;
+  const why=prompt('Report '+nm+'. What is the problem? (spam, harassment, fake account, other)');if(why===null)return;
+  const last=[...cache.values()].filter(m=>m.conversation_id===curConv&&m.sender_id===pr).sort((a,b)=>a.created_at.localeCompare(b.created_at)).slice(-10).map(m=>({at:m.created_at,body:m.body||(m.image_path?'[photo]':m.file_path?'[file]':m.audio_path?'[voice]':'')}));
+  const {error}=await sb.from('reports').insert({reported:pr,conversation_id:String(curConv),reason:why.slice(0,300),details:{messages:last}});
+  if(error){console.error(error);alert('Could not send the report right now.');return}
+  alert('Report sent. Thank you.');$('st').classList.remove('on');
+  if(!blocked.has(pr)&&confirm('Also block '+nm+'?')){if(await block(pr))paintBlk()}};
+const _oc3=openConv;openConv=id=>{_oc3(id);paintBlk()};
+const _ri3=renderInbox;renderInbox=()=>{_ri3();paintBlk()};
+const _st3=sendText;sendText=async()=>{const pr=peerOf();if(pr&&blocked.has(pr)){alert('Unblock them to send messages.');return}return _st3()};$('send').onclick=sendText;
+const _sc=startCall;startCall=async v=>{const pr=peerOf();if(pr&&blocked.has(pr)){alert('Unblock them to call.');return}return _sc(v)};
+const _oi3=onInvite;onInvite=p=>{if(p&&blocked.has(p.from))return;_oi3(p)};
+const _s3=start;start=async u=>{await _s3(u);loadBlocks()};
 })();
 </script>
 </body>
