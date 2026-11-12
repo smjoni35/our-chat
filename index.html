@@ -235,6 +235,9 @@ html[data-theme=dark] .m:not(.me){border-color:var(--line)}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 #offl{position:fixed;top:0;left:0;right:0;z-index:95;display:none;padding:calc(6px + env(safe-area-inset-top,0px)) 12px 6px;text-align:center;font-size:13px;background:#c0392b;color:#fff}#offl.on{display:block}
 .lnk{background:none;border:0;color:var(--rose);margin-top:14px;font-weight:600;cursor:pointer;padding:6px}#nm{display:none}
+#reqs{border-bottom:1px solid var(--line);padding-bottom:6px;margin-bottom:4px}.rqh{padding:12px 16px 4px;font-weight:600;font-size:15px}
+.rq{display:flex;align-items:center;gap:12px;padding:8px 16px}.rq .pbtn{padding:8px 14px;font-size:14px;cursor:pointer}
+#reqb{display:none;padding:8px 16px;font-size:13px;color:var(--mute);text-align:center;background:color-mix(in srgb,var(--rose) 8%,transparent)}
 </style>
 </head>
 <body>
@@ -998,6 +1001,45 @@ start=async u=>{try{const {data}=await sb.from('profiles').select('id').eq('id',
 const _p=paintNc;
 paintNc=()=>{if($('ncq').value.trim().length<3){$('ncl').innerHTML='<div class="empty">Type at least 3 letters of a name or @username to find someone.</div>';return}_p()};
 $('ncq').oninput=paintNc;
+})();
+</script>
+<script>
+/* message requests */
+(()=>{
+const pendIn=c=>c&&c.accepted===false&&c.requested_by&&c.requested_by!==me,pendOut=c=>c&&c.accepted===false&&c.requested_by===me;
+function paintReq(){let b=$('reqb');if(!b){b=document.createElement('div');b.id='reqb';$('msgs').before(b)}
+  const c=convs.get(curConv),on=pendOut(c);b.style.display=on?'block':'none';if(on)b.textContent='Waiting for '+c.name+' to accept. You can send up to 3 messages until then.'}
+const _ri=renderInbox;
+renderInbox=()=>{
+  _ri();const list=$('ilist'),reqs=[...convs.values()].filter(pendIn);
+  const old=$('reqs');if(old)old.remove();
+  reqs.forEach(c=>{const b=list.querySelector('.ir[data-id="'+c.id+'"]');if(b)b.remove()});
+  if(reqs.length){
+    if(!list.querySelector('.ir')){const e=list.querySelector('.empty');if(e)e.remove()}
+    const d=document.createElement('div');d.id='reqs';const h=document.createElement('div');h.className='rqh';h.textContent='Message requests ('+reqs.length+')';d.appendChild(h);
+    reqs.forEach(c=>{
+      const ms=[...cache.values()].filter(m=>m.conversation_id===c.id),last=ms[ms.length-1];
+      const r=document.createElement('div');r.className='rq';
+      const av=document.createElement('div');av.className='av';paintAv(av,c.name,c.avatar);
+      const im=document.createElement('div');im.className='im';const n=document.createElement('b');n.textContent=c.name;const sp=document.createElement('span');sp.textContent=last?snip(last):'Wants to chat';im.append(n,sp);
+      const ok=document.createElement('button');ok.className='pbtn';ok.textContent='Accept';
+      ok.onclick=async()=>{ok.disabled=true;const {error}=await sb.rpc('accept_chat',{p_cid:String(c.id)});if(error){console.error(error);alert('Could not accept the request.');ok.disabled=false;return}await load();openConv(c.id)};
+      const no=document.createElement('button');no.className='x';no.setAttribute('aria-label','Delete request');no.innerHTML=XI;
+      no.onclick=async()=>{if(!confirm('Delete this request? Their messages will be removed.'))return;const {error}=await sb.rpc('decline_chat',{p_cid:String(c.id)});if(error){console.error(error);alert('Could not delete the request.');return}await load()};
+      r.append(av,im,ok,no);d.appendChild(r)});
+    list.prepend(d);
+  }
+  paintReq();
+};
+const _oc=openConv;openConv=id=>{if(pendIn(convs.get(id))){alert('Accept the request to open this chat.');return}_oc(id)};
+const _st=sendText;
+sendText=async()=>{const c=convs.get(curConv);
+  if(pendOut(c)&&!editing&&$('txt').value.trim()&&[...cache.values()].filter(m=>m.conversation_id===c.id&&m.sender_id===me).length>=3){alert('Wait for '+c.name+' to accept before sending more.');return}
+  return _st()};
+$('send').onclick=sendText;
+let rch=null;const _s2=start;
+start=async u=>{await _s2(u);if(rch)sb.removeChannel(rch);
+  rch=sb.channel('rq-'+u.id).on('postgres_changes',{event:'UPDATE',schema:'public',table:'conversations'},()=>load()).on('postgres_changes',{event:'DELETE',schema:'public',table:'conversations'},()=>load()).subscribe()};
 })();
 </script>
 </body>
